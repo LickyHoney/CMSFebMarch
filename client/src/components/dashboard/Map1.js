@@ -144,26 +144,52 @@ const Map1  = () => {
       
   return (
       <div>
-        <Row>
+         <div class = "logout">
+  <DashBoard />
+  </div>
+  
         <Tabs>
           <div label = "Details">
           {/* <div class='split left'> */}
             
-          
+          <Card className="iq-card">
+                    <CardBody className="iq-card-body">
 
               <form>
+              
                   <div>
-                Search for: <input onChange={changeHandlerFilter} value={newFilter} /><br/>
+                  <Row>
+              <Col sm="4">
+                Search for:
+                </Col>
+                <Col> <input onChange={changeHandlerFilter} value={newFilter} /><br/></Col></Row>
                 </div>
+                <div className="form-group">
+              
+                
                 <h1>Add a Building</h1>
-                Lat: <input onChange={changeHandler} value={newLat} /><br/>
-                Lng: <input onChange={changeHandler1} value={newLng} /><br/>
-                Name: <input onChange={changeHandler2} value={newName} /><br/>
+                <Row>
+              <Col sm="4">
+                Lat: 
+                </Col>
+                <Col>
+                <input onChange={changeHandler} value={newLat} /><br/></Col></Row>
+                <Row>
+              <Col sm="4">
+                Lng: 
+                </Col>
+                <Col><input onChange={changeHandler1} value={newLng} /><br/></Col></Row>
+                <Row>
+              <Col sm="4">
+                Name: 
+                </Col>
+                <Col><input onChange={changeHandler2} value={newName} /><br/></Col></Row>
+                </div>
 
               </form>
               
               <div>
-    <button type="submit" onClick={submitHandler}>add</button><br/>
+    <button type="submit" onClick={submitHandler} className="btn btn-primary float-left">add</button><br/>
 
 
   </div>
@@ -174,6 +200,8 @@ const Map1  = () => {
           <DisplayEntries names={markers} regVal={newFilter} />
 
          </div>
+         </CardBody>
+</Card>
          
           </div>
           
@@ -256,12 +284,10 @@ const Map1  = () => {
  
 
   </div>
-  
+ 
   </Tabs>
-  <div class = "logout">
-  <DashBoard />
-  </div>
-  </Row>
+  
+  
   </div>
           
      
