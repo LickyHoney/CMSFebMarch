@@ -189,7 +189,7 @@ const Map1  = () => {
               </form>
               
               <div>
-    <button type="submit" onClick={submitHandler} className="btn btn-primary float-left">add</button><br/>
+    <button type="submit" onClick={submitHandler} className="btn btn-primary float-left">Add</button><br/>
 
 
   </div>

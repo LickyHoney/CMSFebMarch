@@ -47,9 +47,12 @@ code {
  .iq-card {
   align-items: center;
   justify-content: center;
-  background-color: lightgrey;
+  background-color: rgb(25, 0, 255);
   border: 5px solid black
 }
+/* .iq-card-body {
+  background-color:lightgreen;
+} */
 
 .tab-list {
   border-bottom: 1px solid #ccc;
