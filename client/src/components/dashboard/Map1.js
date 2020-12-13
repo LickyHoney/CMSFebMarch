@@ -127,7 +127,7 @@ const Map1  = () => {
           latitude={markers[index].lat}
         >
           <p>
-            <button type="submit" onClick={submitHandler}>{markers[index].name}</button>
+             <button type="submit" onClick={submitHandler}>{markers[index].name}</button> 
             <br />
             
          
@@ -153,7 +153,7 @@ const Map1  = () => {
           {/* <div class='split left'> */}
             
           <Card className="iq-card">
-                    <CardBody className="iq-card-body">
+                    <CardBody className="iq-card-body"> 
 
               <form>
               
@@ -193,15 +193,18 @@ const Map1  = () => {
 
 
   </div>
+   </CardBody>
+</Card>
             <br/><br/>
             <div class='position'>
 
           <h3>Available List of Buildings</h3>
+          
           <DisplayEntries names={markers} regVal={newFilter} />
 
          </div>
-         </CardBody>
-</Card>
+         {/* </CardBody>
+</Card> */}
          
           </div>
           
@@ -209,7 +212,8 @@ const Map1  = () => {
 
          
           {/* <div class='split right'> */}
-          
+          {/* <Card className="iq-card">
+                    <CardBody className="iq-card-body"></CardBody> */}
           <div label='MapView'>
           {/* <Row>
           <Col sm="12">

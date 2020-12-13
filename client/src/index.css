@@ -108,6 +108,22 @@ code {
     
  
 }
+table {
+  font-family: arial, sans-serif;
+  
+  width: 100%;
+}
+
+td, th {
+  border: 5px solid #dddddd;
+  text-align: left;
+  color: black;
+  padding: 8px;
+}
+
+/* tr:nth-child(even) {
+  background-color: #dddddd;
+} */
 
 /*.iq-card-body {
  
