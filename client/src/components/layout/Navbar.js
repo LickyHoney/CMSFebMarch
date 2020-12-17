@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import DashBoard from "../dashboard/Dashboard";
+import HomePage from "../dashboard/HomePage";
 
 class Navbar extends Component {
   render() {
@@ -16,6 +18,10 @@ class Navbar extends Component {
             >
               <h1>
               <b>Welcome to CMSIndoor</b>
+              <div><HomePage /></div>
+              <div class = "logout">
+   <DashBoard />
+   </div>
               </h1>
               
             </Link>

@@ -6,25 +6,30 @@ import DisplayEntries from "./DisplayEntries"
 import service from "./services.js";
 
 import { Polygon, Popup, Rectangle, Marker, TileLayer } from "react-leaflet";
-
+import { Link } from "react-router-dom";
+import { Table, Container, Col, Row } from "reactstrap";
 import {MapContainer } from "react-leaflet";
-import { Card, CardBody, Col, Row } from "reactstrap";
+
 import {Nav,NavItem,NavLink,TabContent,TabPane} from 'reactstrap';
 import Tabs from "./Tabs";
 import PropTypes from "prop-types";
 import DashBoard from "./Dashboard";
+//import icon from "./icon_building.png";
+import { Icon, marker } from "leaflet";
+import { SelectionState } from "@devexpress/dx-react-grid";
 
 const Map1  = () => {
   
     
 
-    const [markers, setMarkers] = useState([])
+      const [markers, setMarkers] = useState([])
       const [ newLat, setNewLat ] = useState('')
       const [ newLng, setNewLng ] = useState('')
       const [ newName, setNewName ] = useState('')
       const [newFilter, setNewFilter] = useState('')
+      const [ buttonVal, setButtonVal ] = useState("")
       
-
+      
       useEffect(()=>{
         service
         .getAll()
@@ -84,10 +89,9 @@ const Map1  = () => {
   const changeHandler = (event) => setNewLat(event.target.value)
   const changeHandler1 = (event) => setNewLng(event.target.value)
   const changeHandler2= (event) => setNewName(event.target.value)
-  const changeHandlerFilter = (event) => setNewFilter(event.target.value)
+  //const changeHandlerFilter = (event) => setNewFilter(event.target.value)
       
- 
-
+  
 
         const position = [60.21749913, 24.938379];
         const position1 = [60.21749913, 24.806496774]
@@ -117,184 +121,436 @@ const Map1  = () => {
 
         })
     }
-    function renderPopup (index){
+//     const deleteHandler = (id) =>{
+      
+//       //const marker = markers.find((p) => p.refnum === id);
+//       const name = markers.description
+//           if(window.confirm(`Do you really want to delete ${name}\'s Building details?`)){
+//               service
+//               .deletion(id)
+//               .then(response => {
+
+//                   //const filteredMarkers = markers.filter((marker) => marker.refnum !== id)
+// const filteredMarkers = response.data;
+//                   setMarkers(filteredMarkers);
+                  
+//               //     setName("")
+//               //     setStreet("")
+//               //     setApartment("")
+//               //   setDoorno("")
+//               //   setRegion("")
+//               //   setCountry("")
+//               // setButtonVal("")
+//               })
+//           }
+      
+    
+//   }
+// const deleteHandler = (id) => {
+  
+//   service
+//   .deletion(id)
+//     .then(response => {
+//       setMarkers(markers.filter((marker) => marker.id !== id))
+//       console.log(response.data);
+      
+//     })
+    
+// };
+const [filter, setFilter] = useState("");
+  const [filteredMarkers, setFilteredMarkers] = useState(null);
+// const handleDelete = (id) => {
+//   const marker = markers.find((p) => p.refnum === id);
+//   const confirmDelete = window.confirm(`Delete ${markers.description}?`);
+//   if (confirmDelete) {
+//     service.deleteion(id).then(() => {
+//       //Update state --> filter out deleted person
+//       const filteredMarkers = markers.filter((marker) => marker.refnum !== id);
+//       setMarkers(filteredMarkers);
+
+//       // reset filter
+//       setFilter("");
+//     });
+//   }
+// };
+
+// const handleDelete = (id) => {
+  
+//    service
+//       .deletion(id)
+//       .then(res => {
+//         ((previousState) => {
+//           return {
+//             setMarkers: previousState.markers.filter(m => m.refnum !== id)
+//           };
+//         });
+//       })
+//       .catch(err => {
+//         console.log(err);
+//       });
+//   };
+  
+// const handleDelete = (id, nameToBeDeleted,e) => {
+    
+//     service
+//          .deletion(id)
+//          .then(response => {
+//           setMarkers(markers.filter(marker => marker.id !== id));
+//            console.log(response.data)
+//          }).catch(error => {
+//            console.log(error)
+//          });
+//         }
+
+const handleDelete = (id, nameToBeDeleted,e) => {
+  if (window.confirm(`Delete ${nameToBeDeleted}?`)) {
+   service
+      .deletion(id)
+      .then(() => {
+        setMarkers(markers.filter(marker => marker.id !== id));
+        window.confirm(`Deleted ${nameToBeDeleted}`);
+      })
+       .catch(() => {
+         window.confirm(`Error: ${nameToBeDeleted} already deleted`, 'red');
+        setMarkers(markers.filter((marker) => marker.id !== id));
+       });
+  }
+}
+const handleFilter = (event) => {
+  setFilter(event.target.value);
+  const filtered = markers.filter((marker) =>
+    // Check if the search term is included in the names in the phonebook
+    marker.description.toLowerCase().includes(event.target.value.toLowerCase())
+  );
+
+  setFilteredMarkers(filtered);
+};
+    function renderPopup (item){
+  
       return (
         
         <Popup
-          tipSize={5}
-          anchor="bottom-right"
-          longitude={markers[index].lng}
-          latitude={markers[index].lat}
+          
         >
-          <p>
-             <button type="submit" onClick={submitHandler}>{markers[index].name}</button> 
-            <br />
-            
-         
-            
-          </p>
+           
+          <Link  to={item.link} >{item.description}</Link>
         </Popup>
         
       );
     }
+
+    // function renderPopup (index){
+    //   return (
+        
+    //     <Popup
+    //       tipSize={5}
+    //       anchor="bottom-right"
+    //       longitude={markers[index].lng}
+    //       latitude={markers[index].lat}
+    //     >
+    //       <p>
+    //          <button type="submit" onClick={submitHandler}>{markers[index].name}</button> 
+    //         <br />
+            
+         
+            
+    //       </p>
+    //     </Popup>
+        
+    //   );
+    // }
     const handleClick = (e) => {
       e.latlng()
     }
   
+    const building = new Icon({
+      iconUrl: "./icon_building.svg",
+      iconSize: [25, 25]
+    });
+    
+      // const [columns] = useState([
+      //     {
+      //         title: "Name",
+      //         name: "name",
+      //     },
+      //     {
+      //         title: "Lat",
+      //         name: "lat",
+      //         sortable: true,
+      //     },
+      //     {
+      //         title: "Lng",
+      //         name: "lng",
+      //         sortable: true,
+      //     },
+      // ]);
+      // const [rows, setRows] = useState([
+      //     {newName},
+      //     {newLat},
+      //     {newLng}
+          
+      // ]);
+      // const [editingCells, setEditingCells] = useState([]);
       
-  return (
-      <div>
-         <div class = "logout">
-  <DashBoard />
-  </div>
+    //  const [ newNumber, setNumber ] = useState(number)
+      
   
-        <Tabs>
-          <div label = "Details">
-          {/* <div class='split left'> */}
+      // useEffect(()=>{
+      //     setButtonVal(<button onClick={deleteHandler(id)}>delete</button>)
+      // },
+      // [])
+      // const [search, setSearch] = useState([]);
+      
+        
+      
+      
+      
+    
+  
+  return (
+//       <div>
+//          <div class = "logout">
+//   <DashBoard />
+//   </div>
+  
+//         <Tabs>
+//           <div label = "Details">
+//           {/* <div class='split left'> */}
             
-          <Card className="iq-card">
-                    <CardBody className="iq-card-body"> 
+//           <Card className="iq-card">
+//                     <CardBody className="iq-card-body"> 
 
-              <form>
+//               <form>
               
-                  <div>
-                  <Row>
-              <Col sm="4">
-                Search for:
-                </Col>
-                <Col> <input onChange={changeHandlerFilter} value={newFilter} /><br/></Col></Row>
-                </div>
-                <div className="form-group">
+//                   <div>
+//                   <Row>
+//               <Col sm="4">
+//                 Search for:
+//                 </Col>
+//                 <Col> <input onChange={changeHandlerFilter} value={newFilter} /><br/></Col></Row>
+//                 </div>
+//                 <div className="form-group">
               
                 
-                <h1>Add a Building</h1>
-                <Row>
-              <Col sm="4">
-                Lat: 
-                </Col>
-                <Col>
-                <input onChange={changeHandler} value={newLat} /><br/></Col></Row>
-                <Row>
-              <Col sm="4">
-                Lng: 
-                </Col>
-                <Col><input onChange={changeHandler1} value={newLng} /><br/></Col></Row>
-                <Row>
-              <Col sm="4">
-                Name: 
-                </Col>
-                <Col><input onChange={changeHandler2} value={newName} /><br/></Col></Row>
-                </div>
+//                 <h1>Add a Building</h1>
+//                 <Row>
+//               <Col sm="4">
+//                 Lat: 
+//                 </Col>
+//                 <Col>
+//                 <input onChange={changeHandler} value={newLat} /><br/></Col></Row>
+//                 <Row>
+//               <Col sm="4">
+//                 Lng: 
+//                 </Col>
+//                 <Col><input onChange={changeHandler1} value={newLng} /><br/></Col></Row>
+//                 <Row>
+//               <Col sm="4">
+//                 Name: 
+//                 </Col>
+//                 <Col><input onChange={changeHandler2} value={newName} /><br/></Col></Row>
+//                 </div>
 
-              </form>
+//               </form>
               
-              <div>
-    <button type="submit" onClick={submitHandler} className="btn btn-primary float-left">Add</button><br/>
+//               <div>
+//     <button type="submit" onClick={submitHandler} className="btn btn-primary float-left">Add</button><br/>
 
 
-  </div>
-   </CardBody>
-</Card>
-            <br/><br/>
-            <div class='position'>
+//   </div>
+//    </CardBody>
+// </Card>
+//             <br/><br/>
+//             <div class='position'>
 
-          <h3>Available List of Buildings</h3>
+//           <h3>Available List of Buildings</h3>
           
-          <DisplayEntries names={markers} regVal={newFilter} />
+//           <DisplayEntries names={markers} regVal={newFilter} />
 
-         </div>
-         {/* </CardBody>
-</Card> */}
+//          </div>
+//          {/* </CardBody>
+// </Card> */}
          
-          </div>
+//           </div>
           
 
 
          
-          {/* <div class='split right'> */}
-          {/* <Card className="iq-card">
-                    <CardBody className="iq-card-body"></CardBody> */}
-          <div label='MapView'>
-          {/* <Row>
-          <Col sm="12">
-              <Card className="iq-card">
-          <CardBody className="iq-card-body"> */}
+//           {/* <div class='split right'> */}
+//           {/* <Card className="iq-card">
+//                     <CardBody className="iq-card-body"></CardBody> */}
+//           <div label='MapView'>
+//           {/* <Row>
+//           <Col sm="12">
+//               <Card className="iq-card">
+//           <CardBody className="iq-card-body"> */}
 
-          <MapContainer
-    style={ { height: "500px", width: "100%"}}
-    center={position1} zoom={12} maxZoom={100}
-    center={[60.2330141, 24.8302054]} zoom={12} maxZoom={100}
-    onClick={handleClick}
-  >
-    <Polygon positions={[[60.218228, 24.811606],[60.218358, 24.811976],[ 60.218348, 24.812711],[60.217940, 24.811874]]} color='red' />
+//           <MapContainer
+//     style={ { height: "500px", width: "100%"}}
+//     center={position1} zoom={12} maxZoom={100}
+//     center={[60.2330141, 24.8302054]} zoom={12} maxZoom={100}
+//     onClick={handleClick}
+//   >
+//     <Polygon positions={[[60.218228, 24.811606],[60.218358, 24.811976],[ 60.218348, 24.812711],[60.217940, 24.811874]]} color='red' />
 
-    <TileLayer
-  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-/>
+//     <TileLayer
+//   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//   attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+// />
 
-<Rectangle
-    bounds={wc}
-    color={'yellow'}
-   />
- <Rectangle
-    bounds={kids}
-    color={'red'}
-   />
-<Rectangle
-    bounds={br}
-    color={'pink'}
-   />
-<Rectangle
-    bounds={tv}
-    color={'purple'}
-   />
+// <Rectangle
+//     bounds={wc}
+//     color={'yellow'}
+//    />
+//  <Rectangle
+//     bounds={kids}
+//     color={'red'}
+//    />
+// <Rectangle
+//     bounds={br}
+//     color={'pink'}
+//    />
+// <Rectangle
+//     bounds={tv}
+//     color={'purple'}
+//    />
 
-  <Rectangle
-    bounds={Corridar}
-    color={'blue'}
-   />
-<Rectangle
-    bounds={Kitchen}
-    color={'orange'}
-   />
-
-
+//   <Rectangle
+//     bounds={Corridar}
+//     color={'blue'}
+//    />
+// <Rectangle
+//     bounds={Kitchen}
+//     color={'orange'}
+//    />
 
 
-    {markers.map((marker, index) => {
-        let post = [marker.lat, marker.lng];
-      return (
+
+
+//     {markers.map((marker, index) => {
+//         let post = [marker.latitude, marker.longitude];
+//       return (
         
-        <Marker
-          key={index}
-          position={post}
+//         <Marker
+//           key={index}
+//           position={post}
+         
+         
           
           
-        >
-      {renderPopup(index) }
-        </Marker>
+//         >
+//       {renderPopup(index) }
+//         </Marker>
         
-      );
+//       );
       
-    })}
+//     })}
     
-  </MapContainer>
-  {/* </CardBody>
-                  </Card>
-          </Col>
-      </Row>
-*/}
+//   </MapContainer>
+//   {/* </CardBody>
+//                   </Card>
+//           </Col>
+//       </Row>
+// */}
  
 
-  </div>
+//   </div>
  
-  </Tabs>
+//   </Tabs>
   
   
-  </div>
+//   </div>
+
           
+<Row className="iq-example-row">
+<Container>
+
+<Row>
+              <Col sm="4">
+                Search for:
+                 <input
+        label="Filter shown with"
+        htmlFor="filter"
+        type="text"
+        value={filter}
+        onChange={handleFilter}
+      />
+                </Col></Row> 
+<Row className="row">
+<Col className="col-4">
+{/* <DisplayEntries names={markers} deleteHandler={deleteHandler} /> */}
+<Table hover className="table" items={markers}>
+   <thead>
+      <tr>
+         <th scope="col">#</th>
+         <th scope="col">Name</th>
+         <th scope="col">Address</th>
+         <th scope="col">Delete</th>
+         
+      </tr>
+   </thead>
+   <tbody>
      
+                                {
+                                    markers.map((item, index) => (
+                                       
+                                        <tr key={index}>
+                                            <td >{item.id} </td>
+                                           <td> <Link   to={item.link} className="nav-link font-weight-bold ">{item.description} </Link></td>
+                                            <td >{item.street}   {item.Apartment} {item.doornum} {item.region} {item.country}</td>
+                                            <td><button type="button"
+      onClick={() => handleDelete(item.id, item.description)}
+    > Delete </button></td>
+    {/* <Link onClick={(e) => handleDelete(item.refnum, item.description, e)} className="nav-link font-weight-bold ">Delete</Link> */}
+
+                                        </tr>
+                                    ))
+                                }
+
+
+   </tbody>
+</Table>
+
+
+</Col>
+<Col className="col-8">
+<MapContainer
+                                            style={ { height: "500px", width: "100%"}}
+                                            
+                                            center={[60.21679719545689, 24.810291821854594]} zoom={12} maxZoom={100}
+                                            
+                                        >
+    
+                                                <TileLayer
+                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                            />
+                            
+                                {
+                                    markers.map((item, index) => (
+                                       
+                                        <Marker   
+                                                position={[item.latitude,item.longitude]}
+                                                onMouseOver={(e) => {
+                                                    e.target.openPopup();
+                                                  }}
+                                                  onMouseOut={(e) => {
+                                                    e.target.closePopup();
+                                                  }}
+                                                >
+                                                          {renderPopup(item) }
+                                                </Marker>
+                                    ))
+                                }
+
+      
+    
+    
+                                     </MapContainer>
+</Col>
+</Row>
+</Container>
+</Row> 
   );
 }
 

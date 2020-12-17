@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const baseUrl = "http://localhost:3010/markers"
+const baseUrl = "http://localhost:3010/data"
 
 const getAll = () =>{
     const request = axios.get(baseUrl)
@@ -17,4 +17,10 @@ const deletion = entryId =>{
     return request.then(response => response.data)
 }
 
-export default {getAll, update, deletion}
+const deleteAll = () => {
+    const request = axios.get(baseUrl)
+    return request.then(response => response.data)
+
+}
+
+export default {getAll, update, deletion, deleteAll}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Map1 from './Map1';
+import FloorMap from './FloorMap';
+//import Dashboard from '../dashboard/DashboardCms/index';
 //import AddBuilding from './AddBuilding';
 import axios from 'axios';
 import DisplayEntries from "./DisplayEntries"
@@ -35,7 +37,7 @@ class HomePage extends React.Component {
         <p> <Link to="/login">Logout</Link></p></div>
                 </div>
               
-             <Map1 />
+             <FloorMap />
             </div>
         );
     }

@@ -12,12 +12,14 @@ import Navbar from "./components/layout/Navbar";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
-import Dashboard from "./components/dashboard/Dashboard";
+import Dashboard from "./components/dashboard/DashboardCms/index";
 //import MapView from "./components/dashboard/MapView";
 
 
 import "./App.css";
 import Map1 from "./components/dashboard/Map1";
+//import FloorMap from "./components/dashboard/FloorMap";
+import FloorMap from "./components/dashboard/FloorMap";
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -48,11 +50,11 @@ class App extends Component {
             <Route exact path="/" component={Login} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
-            
+            <Route path="/FloorMap/:refnum" component={FloorMap} /> 
 
             <Switch>
-              {/* <PrivateRoute exact path="/dashboard" component={Dashboard} /> */}
-              <PrivateRoute exact path="/map1" component={Map1} />
+              {/* <PrivateRoute exact path="/dashboard" component={Dashboard} />  */}
+              <PrivateRoute exact path="/Map1" component={Map1} />
             </Switch>
           </div>
         </Router>
