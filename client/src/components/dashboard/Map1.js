@@ -7,7 +7,7 @@ import service from "./services.js";
 
 import { Polygon, Popup, Rectangle, Marker, TileLayer } from "react-leaflet";
 import { Link } from "react-router-dom";
-import { Table, Container, Col, Row } from "reactstrap";
+import { Table, Container, Col, Row, PopUp } from "reactstrap";
 import {MapContainer } from "react-leaflet";
 
 import {Nav,NavItem,NavLink,TabContent,TabPane} from 'reactstrap';
@@ -508,6 +508,10 @@ const handleDelete = (id, nameToBeDeleted,e) => {
                
 <Row className="row">
 <Col className="col-4">
+{/* <div className="btn" onClick={this.togglePopup}>
+      <button>New User?</button>
+      </div>
+    {isOpen ? <PopUp toggle={this.togglePopup} /> : null} */}
 Search for:
 <input
         type="text"

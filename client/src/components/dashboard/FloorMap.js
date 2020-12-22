@@ -7,6 +7,7 @@
 import service from './services';
 
 
+
 const FloorMap  = () => {
   
     
@@ -42,11 +43,12 @@ const FloorMap  = () => {
     <Card >
     <CardBody>
 
+<div>
 
 
 
 
-                    <div>
+
                         {markers.filter(item => item.id===refno).map(filteredName => (
                             <div>
                               

@@ -12,6 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "mazemap": "file:./mazemap",
     "@devexpress/dx-core": "^2.7.3",
     "@devexpress/dx-react-core": "^2.7.3",
     "@devexpress/dx-react-grid": "^2.7.3",

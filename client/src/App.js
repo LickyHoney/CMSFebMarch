@@ -20,6 +20,7 @@ import "./App.css";
 import Map1 from "./components/dashboard/Map1";
 //import FloorMap from "./components/dashboard/FloorMap";
 import FloorMap from "./components/dashboard/FloorMap";
+import { MazeMapWrapper } from "./components/dashboard/MazeMapWrapper";
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -50,7 +51,8 @@ class App extends Component {
             <Route exact path="/" component={Login} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
-            <Route path="/FloorMap/:refnum" component={FloorMap} /> 
+            {/* <Route path="/FloorMap/:refnum" component={FloorMap} />  */}
+            <Route path="/MazeMap" component={MazeMapWrapper} />
 
             <Switch>
               {/* <PrivateRoute exact path="/dashboard" component={Dashboard} />  */}
