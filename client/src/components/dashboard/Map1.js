@@ -157,8 +157,25 @@ const Map1  = () => {
 //     })
     
 // };
-const [filter, setFilter] = useState("");
-  const [filteredMarkers, setFilteredMarkers] = useState(null);
+// const [filter, setFilter] = useState("");
+//   const [filteredMarkers, setFilteredMarkers] = useState([]);
+const [searchTerm, setSearchTerm] = useState("");
+ //const [searchResults, setSearchResults] = React.useState([]);
+  const handleChange = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  useEffect(() => {
+    const results = markers.filter(marker =>
+      marker.description.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+    );
+    setMarkers(results);
+   
+    
+    console.log(results)
+  }, [searchTerm]);
+
+
 // const handleDelete = (id) => {
 //   const marker = markers.find((p) => p.refnum === id);
 //   const confirmDelete = window.confirm(`Delete ${markers.description}?`);
@@ -216,15 +233,15 @@ const handleDelete = (id, nameToBeDeleted,e) => {
        });
   }
 }
-const handleFilter = (event) => {
-  setFilter(event.target.value);
-  const filtered = markers.filter((marker) =>
-    // Check if the search term is included in the names in the phonebook
-    marker.description.toLowerCase().includes(event.target.value.toLowerCase())
-  );
+// const handleFilter = (event) => {
+//   setFilter(event.target.value);
+//   const filtered = markers.filter((marker) =>
+//     // Check if the search term is included in the names in the phonebook
+//     marker.description.toLowerCase().includes(event.target.value.toLowerCase())
+//   );
 
-  setFilteredMarkers(filtered);
-};
+//   setFilteredMarkers(filtered);
+// };
     function renderPopup (item){
   
       return (
@@ -303,10 +320,31 @@ const handleFilter = (event) => {
       
         
       
-      
-      
+    //  handleFilter = (e) => {
+    //     // filter post list by title using onKeyUp function
+    //     const post = markers.filter(marker =>
+    //       marker.description.rendered.toLowerCase().includes(e.target.value.toLowerCase())
+    //     );
+    //     this.setState({ post });
+    //   };
     
-  
+      // const handleFilter = (event) => {
+      //      setFilter(event.target.value);
+      //      const filtered = markers.filter((marker) =>
+      //        // Check if the search term is included in the names in the phonebook
+      //       //  marker.description.toLowerCase().includes(event.target.value.toLowerCase())
+      //       marker.description.toLowerCase().search(event.target.value.toLowerCase()!== -1)
+
+      //       );
+        
+      //      setFilteredMarkers(filtered);
+      //    };
+      
+      const [isOpen, setIsOpen] = useState(false);
+ 
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+  }
   return (
 //       <div>
 //          <div class = "logout">
@@ -465,19 +503,18 @@ const handleFilter = (event) => {
 <Row className="iq-example-row">
 <Container>
 
-<Row>
-              <Col sm="4">
-                Search for:
-                 <input
-        label="Filter shown with"
-        htmlFor="filter"
-        type="text"
-        value={filter}
-        onChange={handleFilter}
-      />
-                </Col></Row> 
+
+                
+               
 <Row className="row">
 <Col className="col-4">
+Search for:
+<input
+        type="text"
+        placeholder="Search"
+        value={searchTerm}
+        onChange={handleChange}
+      />
 {/* <DisplayEntries names={markers} deleteHandler={deleteHandler} /> */}
 <Table hover className="table" items={markers}>
    <thead>

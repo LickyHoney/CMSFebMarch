@@ -49,7 +49,8 @@ const FloorMap  = () => {
                     <div>
                         {markers.filter(item => item.id===refno).map(filteredName => (
                             <div>
-                             <h1 className="display-8">#{filteredName.id}-{filteredName.description}</h1>
+                              
+                             <h1 className="display-7">#{filteredName.id}-{filteredName.description}</h1>
                              <h1 className="display-9">{filteredName.street}   {filteredName.Apartment} {filteredName.doornum} {filteredName.region} {filteredName.country}</h1>
                              </div>
 

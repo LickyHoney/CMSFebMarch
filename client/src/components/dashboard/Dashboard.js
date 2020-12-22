@@ -23,7 +23,7 @@ class Dashboard extends Component {
     return (
       <div >
         
-        
+        Hi <i><b>{user.name}</b></i>
                
                 {/* <MapView /> */}
             <div>
