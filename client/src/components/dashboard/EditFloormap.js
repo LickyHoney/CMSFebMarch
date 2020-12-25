@@ -3,7 +3,8 @@
  //import { LayersControl as BaseLayersControl } from 'react-leaflet';
  import { CardBody,Card,ButtonGroup, Button,ButtonToolbar,Form,FormGroup,Label,Input } from 'reactstrap';
  import React, { useEffect, useState } from "react";
- 
+ import { Col, Row } from "reactstrap";
+
  import {Polygon, Popup, Rectangle, Marker, TileLayer , MapContainer,LayersControl, LayerGroup,useMapEvents} from 'react-leaflet';
 import service from './services';
 
@@ -53,9 +54,14 @@ componentDidMount() {
 }
 render(){
 debugger;
-  return ( <div>
+  return ( 
+    
+  <div>
+    
                   {this.state.markers.filter(item => item.id==="3").map(filteredName => (
                                             <div>
+                                              <Row className="row">
+<Col className="col-4">
                                               
                                               <FormGroup className="form-group">
                                               <Label htmlFor="exampleInputReadonly">Building Id</Label>
@@ -101,10 +107,13 @@ debugger;
                                               readOnly="" defaultValue={filteredName.country} />
                                               </FormGroup>
 
+                                              </Col>
+                                              <Col className="col-8">
+
                                               <MapContainer  
-                                                style={ { height: "500px", width: "100%"}}
+                                                style={ { height: "700px", width: "100%"}}
                                     
-                                                   center={[filteredName.latitude, filteredName.longitude]} zoom={18} maxZoom={100}
+                                                   center={[filteredName.latitude, filteredName.longitude]} zoom={17} maxZoom={100}
                                     
                                                    >
                                   
@@ -145,6 +154,8 @@ debugger;
                                                       </LayersControl>  
                                                       <LocationMarker context1={this}></LocationMarker>
                              </MapContainer>     
+                             </Col>
+                             </Row>
 
 
 
