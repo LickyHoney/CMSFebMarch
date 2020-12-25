@@ -121,6 +121,14 @@ td, th {
   padding: 8px;
 }
 
+p {
+  font-size: 0.875em;
+}
+
+/* .h2 {
+  font-size: 0.5em;
+} */
+
 /* Popup style */
 /* .popup-box {
   position: fixed;
@@ -171,12 +179,4 @@ td, th {
   text-align: center;
   
 } */
-/* .container {
-  height: 300px;
-  width: 300px;
-  background: black;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
+ 

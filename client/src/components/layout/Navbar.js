@@ -10,10 +10,12 @@ class Navbar extends Component {
       <div className="navbar-fixed">
         <nav className="z-depth-0">
           <div className="centered">
-            <Link
-              to="/"
+           <Link to="/Map1" className="btn btn-primary" class="ri-home-4-line" style={{fontSize: '20px', color: 'white', paddingBottom: '50px'}}> Home </Link>
+            <p
+              
               style={{
                 fontFamily: "monospace"
+                
               }}
               className="col s5 brand-logo center black-text"
             >
@@ -25,7 +27,7 @@ class Navbar extends Component {
    </div>
               </h1>
               
-            </Link>
+            </p>
           </div>
         </nav>
       </div>

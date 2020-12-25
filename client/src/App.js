@@ -20,6 +20,7 @@ import "./App.css";
 import Map1 from "./components/dashboard/Map1";
 //import FloorMap from "./components/dashboard/FloorMap";
 import FloorMap from "./components/dashboard/FloorMap";
+import EditFloormap from "./components/dashboard/EditFloormap"
 import { MazeMapWrapper } from "./components/dashboard/MazeMapWrapper";
 
 // Check for token to keep user logged in
@@ -51,12 +52,14 @@ class App extends Component {
             <Route exact path="/" component={Login} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
-            {/* <Route path="/FloorMap/:refnum" component={FloorMap} />  */}
-            <Route path="/MazeMap" component={MazeMapWrapper} />
+            <Route path="/FloorMap/:refnum" component={FloorMap} /> 
+            <Route exact path="/EditFloormap/:refnum" component={EditFloormap} />
+            {/* <Route path="/MazeMap" component={MazeMapWrapper} /> */}
 
             <Switch>
               {/* <PrivateRoute exact path="/dashboard" component={Dashboard} />  */}
               <PrivateRoute exact path="/Map1" component={Map1} />
+              {/* <PrivateRoute exact path="/EditFloormap" component={EditFloormap} /> */}
             </Switch>
           </div>
         </Router>
