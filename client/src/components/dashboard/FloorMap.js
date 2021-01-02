@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
  //import React from 'react';
  //import { LayersControl as BaseLayersControl } from 'react-leaflet';
- import { CardBody,Card,ButtonGroup, Button,ButtonToolbar } from 'reactstrap';
+ import { CardBody,Card,ButtonGroup, Button,ButtonToolbar, Label } from 'reactstrap';
  import React, { useEffect, useState } from "react";
  
- import {Polygon, Popup, Rectangle, Marker, TileLayer , MapContainer,LayersControl, LayerGroup} from 'react-leaflet';
+ import {Tooltip, Polygon, Popup, Rectangle, Marker, TileLayer , MapContainer,LayersControl, LayerGroup} from 'react-leaflet';
 import service from './services';
 import Map1 from './Map1';
 import { Link } from "react-router-dom";
-
+import SlickSliderStyle1 from "./SlickSliderStyle1";
 
 
 const FloorMap  = () => {
@@ -35,14 +35,14 @@ const FloorMap  = () => {
        console.log(e.target.value)
       debugger;
     }
-      
-   
+
   return (
 
     <Card >
     <CardBody>
 
 <div>
+
 
 {/* <div> <Link to="/Map1" className="btn btn-primary"><p class="ri-home-4-line"> Home </p></Link></div> */}
 
@@ -76,12 +76,14 @@ const FloorMap  = () => {
                         
                         </div>
                         <div>
+                        
                         {markers.filter(item => item.id===refno).map(filteredName => (
                             <div>
+
                          <MapContainer
                                     style={ { height: "500px", width: "100%"}}
                                     
-                                    center={[filteredName.latitude, filteredName.longitude]} zoom={18} maxZoom={100}
+                                    center={[filteredName.latitude, filteredName.longitude]} zoom={16} maxZoom={17}
                                     
                                 >
                                   
@@ -98,7 +100,7 @@ const FloorMap  = () => {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {filteredName.floors.map((floor, index) => (
+        {/* {filteredName.floors.map((floor, index) => (
         <LayersControl.Overlay checked name={floor.description}>
         <LayerGroup>
           <Polygon positions={floor.boundaries} color={floor.color}
@@ -106,10 +108,73 @@ const FloorMap  = () => {
         </LayerGroup>
         </LayersControl.Overlay>
       
-      ))}
+      ))} */}
+       
          {/* <Polygon positions={floor.boundaries} color={floor.color}
                              />  */}
       </LayersControl.BaseLayer>
+      <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {filteredName.floors.map((floor, index) => (
+        <LayersControl.BaseLayer checked name={floor.description}>
+        <LayerGroup>
+          <Polygon positions={floor.boundaries} color={floor.color}
+                             />
+{
+  floor.blocks.map((block, ind) => (
+    <Polygon positions={block.bounds}>
+          {/* <Tooltip sticky>        {block.text}</Tooltip> */}
+      {/* <Popup direction="center" >
+        {block.text}
+      </Popup> */
+      
+      <Marker position={block.marker}>
+              <Popup>
+                    <span>{block.text}</span>
+                    {/* <div className="iq-card-body" id={'post-slider'}>
+                              <SlickSliderStyle1 slidesToShow={2}>
+                              <li className="d-flex align-items-center">
+                                {block.images.map((img, idx) => (
+                                  <div>
+                                  <div className="post-image">
+                                  <a href="#">
+                                      <img src={img} alt="post-image" className="img-fluid rounded" />
+                                  </a>
+                                  </div>
+                                  <div className="post-content pl-3">
+
+                                  <div className="text-center d-flex align-items-center justify-content-between">
+                                      
+                                  </div>
+                                  </div>
+                                  </div>
+                                ))}
+                                   
+                                 </li>
+                                 </SlickSliderStyle1>
+                                 </div> */}
+              </Popup>
+              
+      </Marker>
+
+      }
+    </Polygon> 
+                             
+                             
+
+  ))
+}
+
+        </LayerGroup>
+        </LayersControl.BaseLayer>
+      
+      ))}
+
+
+     
+      
       
       
       

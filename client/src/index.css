@@ -125,6 +125,10 @@ p {
   font-size: 0.875em;
 }
 
+.leaflet-draw-draw-polygon {
+  display: none !important;
+}
+
 /* .h2 {
   font-size: 0.5em;
 } */

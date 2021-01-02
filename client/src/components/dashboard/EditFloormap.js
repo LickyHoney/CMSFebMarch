@@ -2,7 +2,7 @@
  //import React from 'react';
  //import { LayersControl as BaseLayersControl } from 'react-leaflet';
  import { CardBody,Card,ButtonGroup, Button,ButtonToolbar,Form,FormGroup,Label,Input } from 'reactstrap';
- import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState, LocationMarker } from "react";
  import { Col, Row } from "reactstrap";
 
  import {Polygon, Popup, Rectangle, Marker, TileLayer , MapContainer,LayersControl, LayerGroup,useMapEvents} from 'react-leaflet';
@@ -10,26 +10,7 @@ import service from './services';
 
 import { Link } from "react-router-dom";
 
-function LocationMarker(context1) {
- 
-  const main = context1;
-  const [position, setPosition] = useState(null)
-  var that=this;
-  const map = useMapEvents({
-    click() {
-      debugger;
-    },
-    locationfound(e) {
-     
-    },
-  })
 
-  return position === null ? null : (
-    <Marker position={position}>
-      <Popup>You are here</Popup>
-    </Marker>
-  )
-}
 
 
 class EditFloorMap extends React.Component{
@@ -44,16 +25,38 @@ class EditFloorMap extends React.Component{
     service.getAll().then(latlng =>{
                            console.log("returning", latlng)
                           that.setState({ 'markers': latlng })
-                          debugger;
+                          
                          });
 }
 componentDidMount() {
   
   
+  }
+//  LocationMarker(context1) {
+ 
+//     const main = context1;
+//   this.setState({position: null})
+//    //const [position, setPosition] = useState(null)
+//     var that=this;
+//     const map = useMapEvents({
+//       click() {
+//         debugger;
+//       },
+//       locationfound(e) {
+       
+//       },
+//     })
+  
+//     return position === null ? null : (
+//       <Marker position={position}>
+//         <Popup>You are here</Popup>
+//       </Marker>
+//     )
 
-}
+// }
+ 
 render(){
-debugger;
+
   return ( 
     
   <div>
@@ -76,33 +79,33 @@ debugger;
                                               </FormGroup>
                                             
                                               <FormGroup className="form-group">
-                                              <Label htmlFor="exampleInputReadonly">Building Id</Label>
+                                              <Label htmlFor="exampleInputReadonly">Street</Label>
                                               <Input type="text" className="form-control" id="exampleInputReadonly"
                                               readOnly="" defaultValue={filteredName.street} />
                                               </FormGroup>
 
                                               <FormGroup className="form-group">
-                                              <Label htmlFor="exampleInputReadonly">Building Id</Label>
+                                              <Label htmlFor="exampleInputReadonly">Apartment</Label>
                                               <Input type="text" className="form-control" id="exampleInputReadonly"
                                               readOnly="" defaultValue={filteredName.Apartment} />
                                               </FormGroup>
 
 
                                               <FormGroup className="form-group">
-                                              <Label htmlFor="exampleInputReadonly">Building Id</Label>
+                                              <Label htmlFor="exampleInputReadonly">Doornum</Label>
                                               <Input type="text" className="form-control" id="exampleInputReadonly"
                                               readOnly="" defaultValue={filteredName.doornum} />
                                               </FormGroup>
 
 
                                               <FormGroup className="form-group">
-                                              <Label htmlFor="exampleInputReadonly">Building Id</Label>
+                                              <Label htmlFor="exampleInputReadonly">Region</Label>
                                               <Input type="text" className="form-control" id="exampleInputReadonly"
                                               readOnly="" defaultValue={filteredName.region} />
                                               </FormGroup>
 
                                               <FormGroup className="form-group">
-                                              <Label htmlFor="exampleInputReadonly">Building Id</Label>
+                                              <Label htmlFor="exampleInputReadonly">Country</Label>
                                               <Input type="text" className="form-control" id="exampleInputReadonly"
                                               readOnly="" defaultValue={filteredName.country} />
                                               </FormGroup>
