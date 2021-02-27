@@ -9,7 +9,7 @@ import { CardBody,Card } from 'reactstrap';
 import { Polygon, Popup, Rectangle, Marker, TileLayer } from "react-leaflet";
 import { Link } from "react-router-dom";
 import { Table, Container, Col, Row, PopUp,Button } from "reactstrap";
-import {MapContainer } from "react-leaflet";
+import {Map } from "react-leaflet";
 
 import {Nav,NavItem,NavLink,TabContent,TabPane} from 'reactstrap';
 import Tabs from "./Tabs";
@@ -221,11 +221,12 @@ const handleUpdate = (id, nameToBeDeleted,e) => {
                 
                
 <Row className="row">
-<Col className="col-4">
+<Col className="col-3">
 {/* <div className="btn" onClick={this.togglePopup}>
       <button>New User?</button>
       </div>
     {isOpen ? <PopUp toggle={this.togglePopup} /> : null} */}
+    
 Search for:
 <input
         type="text"
@@ -233,7 +234,10 @@ Search for:
         value={searchTerm}
         onChange={handleChange}
       />
-      <Button variant="btn btn-success" onClick={() => '/EditFloormap'}>Edit</Button>
+     <Link   to="/Addmap" className="nav-link font-weight-bold ">Add</Link>
+        {/* <button type="submit">Add</button> */}
+      
+      {/* <Button variant="btn btn-success" onClick={() => '/EditFloormap'}>Edit</Button> */}
       <br/>
       <br/>
 {/* <DisplayEntries names={markers} deleteHandler={deleteHandler} /> */}
@@ -277,8 +281,8 @@ Search for:
 
 
 </Col>
-<Col className="col-8">
-<MapContainer
+<Col className="col-7">
+<Map
                                             style={ { height: "500px", width: "100%"}}
                                             
                                             center={[60.21679719545689, 24.810291821854594]} zoom={12} maxZoom={100}
@@ -310,7 +314,7 @@ Search for:
       
     
     
-                                     </MapContainer>
+                                     </Map>
 </Col>
 </Row>
 

@@ -4,7 +4,7 @@
  import { CardBody,Card,ButtonGroup, Button,ButtonToolbar, Label } from 'reactstrap';
  import React, { useEffect, useState } from "react";
  
- import {Tooltip, Polygon, Popup, Rectangle, Marker, TileLayer , MapContainer,LayersControl, LayerGroup} from 'react-leaflet';
+ import {Tooltip, Polygon, Popup, Rectangle, Marker, TileLayer , Map,LayersControl, LayerGroup} from 'react-leaflet';
 import service from './services';
 import Map1 from './Map1';
 import { Link } from "react-router-dom";
@@ -80,7 +80,7 @@ const FloorMap  = () => {
                         {markers.filter(item => item.id===refno).map(filteredName => (
                             <div>
 
-                         <MapContainer
+                         <Map
                                     style={ { height: "500px", width: "100%"}}
                                     
                                     center={[filteredName.latitude, filteredName.longitude]} zoom={16} maxZoom={17}
@@ -198,7 +198,7 @@ const FloorMap  = () => {
 
 
 
-                             </MapContainer> 
+                             </Map> 
                              </div>
                         ))
                         }
