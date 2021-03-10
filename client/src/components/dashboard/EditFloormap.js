@@ -391,21 +391,23 @@ const onShapeDrawn = (e) => {
 
   useEffect(()=>{
     debugger;
-    const map = editRef.current.leafletElement;
-  map.on("baselayerchange", (e) => {
-    //do whatever
-    console.log(e.name);
-    switch (e.name) {
-      case "Sello":
+     const map = editRef.current.leafletElement._map;
+   map.on("baselayerchange", (e, f) => {
+     debugger;
+
+  //   //do whatever
+     console.log(e.name);
+     switch (e.name) {
+       case "Sello":
         console.log("Sello");
         break;
-      case ({newDesc}):
-        console.log({newDesc});
+       case ({newDesc}):
+         console.log({newDesc});
         break;
-      default:
-        return;
-    }
-  });
+       default:
+         return;
+     }
+   });
     //var control = LayersControl.activeLayers(baseLayers)
     service
     .getBuilding(refno)
