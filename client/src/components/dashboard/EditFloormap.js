@@ -63,7 +63,10 @@ const EditFloorMap = (props) =>
   const [drawing, setDrawing] = useState(false);
   const [showDrawBlock, setShowDrawBlock] = useState(false);
   const [polyFlag, setPolyFlag] = useState('');
+  const [activeFloor, setActiveFloor] = useState('')
   //const editRef = useRef();
+  //const [map, setMap] = useState(null);
+
   const updateFloor = {
 
     floorno: 0,
@@ -114,7 +117,10 @@ const EditFloorMap = (props) =>
   //   bounds: []
   // }
   const handleManageBoundaries = (e) => {
+    debugger;
+    console.log(activeFloor);
     const { layerType, layer } = e;
+    
     if (layerType === "polygon") {
       const { _leaflet_id } = layer;
       setMapLayers((layers) => [
@@ -247,6 +253,37 @@ const addBoundaries = (e) =>{
 
 
 
+}
+
+const handleMap = (e) =>
+{
+  debugger;
+  const map = editRef.current.leafletElement._map;
+  //const map = editRef.current.leafletElement.getBounds();
+  map.on("baselayerchange", (e, f) => {
+//     //do whatever
+debugger;
+    console.log(e.name);
+    //const floor = e.name;
+    
+     setActiveFloor(e.name);
+     console.log(setActiveFloor)
+
+    
+    //  switch (e.name) {
+    //   case "Sello":
+      
+    //     console.log("Sello");
+    //     break;
+    //   case ({newDesc}):
+    //     console.log({newDesc});
+    //     break;
+    //   default:
+    //     return;
+    // }
+console.log(map);
+
+})
 }
 
 
@@ -391,23 +428,23 @@ const onShapeDrawn = (e) => {
 
   useEffect(()=>{
     debugger;
-     const map = editRef.current.leafletElement._map;
-   map.on("baselayerchange", (e, f) => {
-     debugger;
+  //    const map = editRef.current.leafletElement._map;
+  //  map.on("baselayerchange", (e, f) => {
+  //    debugger;
 
-  //   //do whatever
-     console.log(e.name);
-     switch (e.name) {
-       case "Sello":
-        console.log("Sello");
-        break;
-       case ({newDesc}):
-         console.log({newDesc});
-        break;
-       default:
-         return;
-     }
-   });
+  // //   //do whatever
+  //    console.log(e.name);
+  //    switch (e.name) {
+  //      case "Sello":
+  //       console.log("Sello");
+  //       break;
+  //      case ({newDesc}):
+  //        console.log({newDesc});
+  //       break;
+  //      default:
+  //        return;
+  //    }
+  //  });
     //var control = LayersControl.activeLayers(baseLayers)
     service
     .getBuilding(refno)
@@ -609,7 +646,8 @@ const changeHandlerText = (event) => setNewText(event.target.value)
 
             zoomControl={true}  
             className={classes.map} 
-            ref={editRef}>
+            ref={editRef}
+            onClick={handleMap}>
 
 
 
@@ -710,7 +748,7 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                 <Button
                 
                 className="btn btn-primary"
-                onClick={handleManageBoundaries}
+                onClick={handleManageBoundaries ()}
 
                 >
                       Manage Boundaries
