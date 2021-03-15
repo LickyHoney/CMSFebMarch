@@ -20,7 +20,8 @@ const update = newEntry =>{
 }
 
 const updateBuilding = (bid, entry) => {
-    const request = axios.post(baseUrl + `/${bid}`,entry)
+    const request = axios.put(baseUrl + `/${bid}`,entry)
+
     return request.then(response => response.data)
 }
 
