@@ -195,29 +195,43 @@ const handleEditFloor = (e) => {
 
 const handleReset = (e) => {
   debugger;
-
+  
+  
   for (var i = 0; i < markers[0].floors.length; i++) { 
     if(markers[0].floors[i].description===activeFloor.name){
     
       
-        markers[0].floors[i].boundaries= markers[0].floors[0].boundaries_backup;
+        markers[0].floors[i].boundaries= markers[0].floors[i].boundaries_backup;
         markers[0].floors[i].boundaries_backup = [];
         break;
 }
 }
 }
+// const handleFloorReset = (e) => {
+//   debugger;
+//   if(polyFlag==='B')
+//   for (var i = 0; i < markers[0].floors.length; i++) { 
+//     if(markers[0].floors[i].description===activeFloor.name){
+    
+      
+//         markers[0].floors[i].blocks[i].bounds= markers[0].floors[i].blocks[i].bounds_backup;
+//         markers[0].floors[i].blocks[i].bounds_backup = [];
+//         break;
+// }
+// }
+// }
 const handleBlock = (e) => {
   debugger;
   for (var i = 0; i < markers[0].floors.length; i++) { 
     if(markers[0].floors[i].description===activeFloor.name){
     
       if(markers[0].floors[i].boundaries.length>0) {
-        if (markers[0].floors[i].blocks[0].bounds.length>0){
+        
 
 
-        markers[0].floors[i].blocks[0].bounds_backup = markers[0].floors[i].blocks[0].bounds;
-        markers[0].floors[i].blocks[0].bounds = [];
-        }
+        markers[0].floors[i].blocks[i].bounds_backup = markers[0].floors[i].blocks[i].bounds;
+        markers[0].floors[i].blocks[i].bounds = [];
+        
       }
 break;
 }
@@ -235,12 +249,12 @@ setDrawing(!drawing)
 const handleBoundaries = (e) => {
   debugger;
   for (var i = 0; i < markers[0].floors.length; i++) { 
-    if(markers[0].floors[0].description===activeFloor.name){
+    if(markers[0].floors[i].description===activeFloor.name){
     
-      if(markers[0].floors[0].boundaries.length>0) {
+      if(markers[0].floors[i].boundaries.length>0) {
 
-        markers[0].floors[0].boundaries_backup = markers[0].floors[0].boundaries;
-        markers[0].floors[0].boundaries = [];
+        markers[0].floors[i].boundaries_backup = markers[0].floors[i].boundaries;
+        markers[0].floors[i].boundaries = [];
         }
 break;
 }
@@ -253,21 +267,22 @@ if (!drawing) {
 }
 
 setDrawing(!drawing)
+
 }
 
 const handleManageBoundaries = (e) => {
     debugger;
     console.log(activeFloor);
     console.log(markers);
-    // for (var i = 0; i < markers[0].floors.length; i++) { 
-      if(markers[0].floors[0].description===activeFloor.name){
+    for (var i = 0; i < markers[0].floors.length; i++) { 
+      if(markers[0].floors[i].description===activeFloor.name){
         debugger;
-        if(markers[0].floors[0].boundaries.length>0) {
+        if(markers[0].floors[i].boundaries.length>0) {
           debugger;
           toggleBoundaries();
          }
 
-     else{
+     else {
         const { layerType, layer } = e;
     if (layerType === "polygon") {
       const { _leaflet_id } = layer;
@@ -291,7 +306,7 @@ setPolyFlag('B')
   setDrawing(!drawing)
 
       }
-    
+      }
 }
     
   
@@ -418,6 +433,7 @@ const addPolygon = (e) =>{
 const onBlockDrawn = (e) => {
   debugger;
   setPolyFlag('L')
+  
   console.log(e);
 
   const { layerType, layer } = e;
@@ -429,7 +445,7 @@ const onBlockDrawn = (e) => {
         if(markers[0].floors[j].boundaries.length>0) {
           debugger;
           
-         
+          
 
           if (!drawing) {
             editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
@@ -443,13 +459,13 @@ const onBlockDrawn = (e) => {
           
            
            }
-           else if(markers[0].floors[j].blocks[j].bounds.length>0){
+           else {
             debugger;
             toggleBlock();
           }
-           else{
-             <popup>Please add boundaries before adding blocks</popup>
-           }
+          //  else{
+          //    <popup>Please add boundaries before adding blocks</popup>
+          //  }
       }
 }
   
@@ -473,12 +489,12 @@ const onShapeDrawn = (e) => {
     for (var j = 0; j < markers[0].floors.length; j++) { 
       if(markers[0].floors[j].description===activeFloor.name){
         if(polyFlag==='B'){
-          if(markers[0].floors[j].boundaries.length>0) {
-                  debugger;
+          // if(markers[0].floors[j].boundaries.length>0) {
+          //         debugger;
           
-                }
+          //       }
           
-             else{
+          //    else{
                
                markers[0].floors[j].boundaries=[];
                debugger;
@@ -492,7 +508,7 @@ const onShapeDrawn = (e) => {
                }
                //markers[0].floors[j].boundaries= layer._latlngs
                markers[0].floors[j].boundaryLeaflet_id = layer._leaflet_id;
-             }
+             //}
         }
         else if(polyFlag==='L'){
           var tempArray = [];
@@ -843,6 +859,7 @@ const changeHandlerText = (event) => setNewText(event.target.value)
 {
    floor.blocks.map((block, ind) => (
     <Polygon positions={block.bounds}>
+    
         <label position={block.center}>
            <Tooltip permanent direction="center" > {block.description}</Tooltip> </label>
        <Popup direction="center" >
@@ -854,6 +871,14 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                 >
                      Edit
                 </Button>
+                {/* <Button
+                
+                className="btn btn-primary"
+                onClick={handleFloorReset}
+
+                >
+                     Reset
+                </Button> */}
                 <Modal isOpen={editBlock} toggle={() => toggleBlock("editBlock")} className="modal-sm">
                         <ModalHeader className="btn btn-primary" toggle={() => toggleBlock("editBlock")}>Are you sure you want to edit the block</ModalHeader>
                         <ModalBody>
