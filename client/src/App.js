@@ -17,10 +17,13 @@ import PrivateRoute from "./components/private-route/PrivateRoute";
 //import MapView from "./components/dashboard/MapView";
 
 
+
 import "./App.css";
 import Map1 from "./components/dashboard/Map1";
 //import FloorMap from "./components/dashboard/FloorMap";
 import FloorMap from "./components/dashboard/FloorMap";
+import ViewBuilding from "./components/dashboard/ViewBuilding";
+
 import EditFloormap from "./components/dashboard/EditFloormap";
 //import Routing from "./components/dashboard/Routing";
 
@@ -58,12 +61,14 @@ class App extends Component {
             <Route path="/FloorMap/:refnum" component={FloorMap} /> 
             <Route exact path="/EditFloormap/:refnum" component={EditFloormap} />
             <Route exact path="/modaltemplate" component={ModalTemplate} />
+            <Route exact path="/ViewBuilding/:refnum" component={ViewBuilding} />
             {/* <Route exact path="/routing" component={Routing}/> */}
             {/* <Route path="/MazeMap" component={MazeMapWrapper} /> */}
 
             <Switch>
               {/* <PrivateRoute exact path="/dashboard" component={Dashboard} />  */}
-              <PrivateRoute exact path="/Map1" component={Map1} />
+              <PrivateRoute exact path="/Map1" component={Map1} /> 
+              {/* <PrivateRoute exact path="/ViewBuilding" component={ViewBuilding} /> */}
               {/* <PrivateRoute exact path="/EditFloormap" component={EditFloormap} /> */}
             </Switch>
           </div>

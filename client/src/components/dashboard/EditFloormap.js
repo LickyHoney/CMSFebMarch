@@ -597,10 +597,7 @@ const onShapeDrawn = (e) => {
   e.layer.on('click', () => {
       editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
   })
-//   e.layer.on('click', (e) => {
-//     //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
-//     onLayerClicked(e, drawControlRef.current)
-// })
+ 
   e.layer.on('contextmenu', () => {
       //do some contextmenu action here
   })
@@ -932,8 +929,8 @@ const changeHandlerText = (event) => setNewText(event.target.value)
           <Polygon positions={floor.boundaries} color={floor.color} 
                              />
 {
-   floor.blocks.map((block) => (
-    <Polygon key={block.id} positions={block.bounds}>
+   floor.blocks.map((block, ind) => (
+    <Polygon positions={block.bounds}>
     
         <label position={block.center}>
            <Tooltip permanent direction="center" class="labelText"> {block.description}</Tooltip> </label>
