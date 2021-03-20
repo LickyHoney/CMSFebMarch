@@ -104,7 +104,7 @@
           "blocks": [
             {
               "name": "Mango",
-              "description": "Mango Seloo",
+              "description": "Mango",
               "icon": "",
               "bounds": [
                 [
@@ -130,7 +130,7 @@
             },
             {
               "name": "Telia",
-              "description": "Telia Sello",
+              "description": "Telia",
               "icon": "",
               "bounds": [
                 [
@@ -150,6 +150,35 @@
                 {
                   "lat": 60.218363193476875,
                   "lng": 24.811708951741366
+                }
+              ]
+            },
+            {
+              "name": "cubus",
+              "description": "cubus",
+              "icon": "",
+              "bounds": [
+                [
+                  60.21805518105925,
+                  24.811297651458716
+                ],
+                [
+                  60.21806934150434,
+                  24.812296635648327
+                ],
+                [
+                  60.21771776056357,
+                  24.812248824493214
+                ],
+                [
+                  60.217729090305944,
+                  24.811335688838323
+                ]
+              ],
+              "center": [
+                {
+                  "lat": 60.21789355103395,
+                  "lng": 24.81179714355352
                 }
               ]
             }
@@ -176,7 +205,7 @@
               24.807767551327068
             ]
           ],
-          "boundaryLeaflet_id": 148,
+          "boundaryLeaflet_id": 286,
           "boundaries_backup": []
         },
         {
@@ -186,7 +215,7 @@
           "blocks": [
             {
               "name": "Emotion",
-              "description": "Emotion sello",
+              "description": "Emotion",
               "icon": "",
               "bounds": [
                 [
@@ -234,6 +263,7 @@
           ],
           "boundaryLeaflet_id": 517
         }
+       
       ]
     }
   ]

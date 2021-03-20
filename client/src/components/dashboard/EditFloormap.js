@@ -4,7 +4,7 @@ import { Col, Row } from "reactstrap";
 import { EditControl } from "react-leaflet-draw";
 import "./assets/leaflet.css"
 import "./assets/leaflet.draw.css"
-import {  Map, TileLayer, FeatureGroup, Marker,Polyline, Popup, Polygon, Tooltip, Rectangle,  LayersControl, LayerGroup,useMapEvents} from 'react-leaflet';
+import {  Map, TileLayer, FeatureGroup, Marker,Polyline, Popup, Polygon, Tooltip, Rectangle,  LayersControl, LayerGroup,useMapEvents,useLeaflet} from 'react-leaflet';
 import service from './services';
 import { makeStyles, Button } from "@material-ui/core";
 import { popup } from 'leaflet';
@@ -70,10 +70,18 @@ const EditFloorMap = (props) =>
   const [editBoundaries, setEditBoundaries] = useState(false);
   const [editBlock, setEditBlock] = useState(false);
   const [blockDescription,setBlockDescription] = useState(false);
+  const [deleteFloor, setDeleteFloor] = useState(false);
   const [blockName, setBlockName] = useState('')
   const [blockDesc, setBlockDesc] = useState('')
   const [icon, setIcon] = useState('')
-  
+  const [activeLayer, setActiveLayer] = useState('')
+  const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+  //const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+
+  const leaflet = useLeaflet();
+  const editLayerRef = React.useRef();
+  let drawControlRef = React.useRef();
+  let {map} = leaflet;
   
  
   
@@ -100,6 +108,10 @@ const EditFloorMap = (props) =>
 
   function toggleBlockDescription() {
     setBlockDescription(!blockDescription);
+  }
+
+  function toggleDeleteFloor() {
+    setDeleteFloor(!deleteFloor);
   }
 
   const onChangeName = e => {
@@ -221,6 +233,7 @@ const handleReset = (e) => {
 // }
 // }
 const handleBlock = (e) => {
+  setPolyFlag('L');
   debugger;
   for (var i = 0; i < markers[0].floors.length; i++) { 
     if(markers[0].floors[i].description===activeFloor.name){
@@ -229,13 +242,15 @@ const handleBlock = (e) => {
         
 
 
-        markers[0].floors[i].blocks[i].bounds_backup = markers[0].floors[i].blocks[i].bounds;
+        markers[0].floors[i].blocks[i].bound_backup = markers[0].floors[i].blocks[i].bounds;
         markers[0].floors[i].blocks[i].bounds = [];
         
       }
 break;
 }
 }
+//toggleBlockDescription();
+//toggleBlockDescription();
 if (!drawing) {
   editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
 } else {
@@ -274,6 +289,7 @@ const handleManageBoundaries = (e) => {
     debugger;
     console.log(activeFloor);
     console.log(markers);
+    setPolyFlag('B')
     for (var i = 0; i < markers[0].floors.length; i++) { 
       if(markers[0].floors[i].description===activeFloor.name){
         debugger;
@@ -294,7 +310,7 @@ const handleManageBoundaries = (e) => {
       ]);
     }
     debugger;
-setPolyFlag('B')
+
 
     if (!drawing) {
       editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
@@ -376,8 +392,8 @@ const addBoundaries = (e) =>{
   })
   e.layer.bindTooltip("Text", 
       {
-        className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
-        sticky: true,
+        className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visiblecg4',
+        sticky: true, 
         direction: 'right'
       }
   );
@@ -391,12 +407,18 @@ const handleMap = (e) =>
   debugger;
   const map = editRef.current.leafletElement._map;
   
-  map.on("baselayerchange", (activeFloor, f) => {
+
+    
+  
+  map.on("baselayerchange", (activeFloor, activeLayer) => {
 //     //do whatever
 debugger;
+
     console.log(activeFloor);
-   
     
+    
+   
+   
      setActiveFloor(activeFloor);
      
 console.log(map);
@@ -428,6 +450,10 @@ const addPolygon = (e) =>{
 
 
 }
+function handleLayerClick(e) {
+  setSelectedLayerIndex(e.target.activeFloor._leaflet_id);
+}
+
 
 
 const onBlockDrawn = (e) => {
@@ -459,10 +485,10 @@ const onBlockDrawn = (e) => {
           
            
            }
-           else {
-            debugger;
-            toggleBlock();
-          }
+          //   else {
+          //    debugger;
+          //    toggleBlock();
+          //  }
           //  else{
           //    <popup>Please add boundaries before adding blocks</popup>
           //  }
@@ -505,15 +531,17 @@ const onShapeDrawn = (e) => {
                  
                  var point = [layer._latlngs[0][k].lat, layer._latlngs[0][k].lng];
                 markers[0].floors[j].boundaries.push(point);
+                
+                //markers[0].floors[j].boundaryCenter.push(boundCenter);
                }
                //markers[0].floors[j].boundaries= layer._latlngs
                markers[0].floors[j].boundaryLeaflet_id = layer._leaflet_id;
+               markers[0].floors[j].boundaryCenter = [layer._bounds.getCenter()];
              //}
         }
-        else if(polyFlag==='L'){
+         else if(polyFlag==='L'){
           var tempArray = [];
-          var tempCenter = [];
-          
+          //var tempCenter = [];
 
           for (var n=0; n < layer._latlngs[0].length; n++){
             
@@ -523,10 +551,11 @@ const onShapeDrawn = (e) => {
             //tempCenter.push(polygonCenter);
           }
           var polygonCenter = [layer._bounds.getCenter()];
+          var polygonId = layer._leaflet_id;
          
-  debugger;
+          debugger;
 
-          var blockObj = {name:blockName,description:blockDesc,icon:icon,bounds:tempArray,center:polygonCenter}
+          var blockObj = {id:polygonId,name:blockName,description:blockDesc,icon:icon,bounds:tempArray,center:polygonCenter}
        
           markers[0].floors[j].blocks.push(blockObj);
           
@@ -536,6 +565,7 @@ const onShapeDrawn = (e) => {
           editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
 
         }
+      //}
           
        
     }
@@ -567,6 +597,10 @@ const onShapeDrawn = (e) => {
   e.layer.on('click', () => {
       editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
   })
+//   e.layer.on('click', (e) => {
+//     //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+//     onLayerClicked(e, drawControlRef.current)
+// })
   e.layer.on('contextmenu', () => {
       //do some contextmenu action here
   })
@@ -577,6 +611,9 @@ const onShapeDrawn = (e) => {
         direction: 'right'
       }
   );
+}
+function onMounted(ctl) {
+  drawControlRef.current = ctl;
 }
 
 
@@ -595,6 +632,8 @@ const onShapeDrawn = (e) => {
       setMarkers(latlng)
       debugger;
     })
+    console.log(mapLayers)
+
   },[])
   
   const refno=window.location.pathname.replace('/EditFloorMap/','');
@@ -607,8 +646,15 @@ const onShapeDrawn = (e) => {
     .updateBuilding(markers[0].id, markers[0])
     
   }
+  const handleDeleteFloor = (e) => {
+    e.preventDefault()
+    debugger;
 
- 
+  }
+
+  function handleLayerClick(e) {
+    setSelectedLayerIndex(e.target.markers.floors.blocks.id);
+  }
 
 const _onCreate = (e) => {
   console.log(e);
@@ -623,6 +669,7 @@ const _onCreate = (e) => {
     ]);
   }
 };
+
 
 const _onEdited = (e) => {
   console.log(e);
@@ -668,12 +715,16 @@ const changeHandlerText = (event) => setNewText(event.target.value)
 
   return ( 
     
-          <div>
+          <div id="container">
+                          
+<Card id="container">
+  <CardBody>
     
                    {
                      
                    markers.filter(item => item.id===refno).map(filteredName => (
                         <div>
+                          <Row className="iq-example-row" id="container">
                         <Row className="row">
                         <Col className="col-4">
                                               
@@ -789,6 +840,26 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                         </ModalFooter>
                         </Modal>
            <Button className="btn btn-success" color="primary" onClick={handleSaveFloor}> SaveFloor </Button>
+           <Button className="btn btn-success" color="primary" onClick={() => toggleDeleteFloor("deleteFloor")}> DeleteFloor </Button>{' '}
+
+{/*Modal*/}
+<Modal isOpen={deleteFloor} toggle={() => toggleDeleteFloor("deleteFloor")} className="modal-sm">
+                    <ModalHeader className="btn btn-primary" toggle={() => toggleDeleteFloor("deleteFloor")}>Delete Floor</ModalHeader>
+<ModalBody>
+                    <h5> Are you sure you want to delete the {activeFloor.name} floor?</h5>
+</ModalBody>
+<ModalFooter>
+
+<Button color="primary" onClick={() => {
+  toggleDeleteFloor("deleteFloor");
+  // handleAddFloor(); 
+  handleDeleteFloor();
+
+}}>OK</Button>{' '}
+<Button color="secondary" onClick={() => toggle("addFloor")}>Cancel</Button>
+</ModalFooter>
+</Modal>
+                        
             <Button className="btn btn-success" color="primary" onClick={handleReset}> reset </Button> 
 
                                                 {/* < ModalTemplate /> */}
@@ -801,7 +872,8 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                         </Card> */}
                     </Col>
                                               <Map 
-            center={[filteredName.latitude, filteredName.longitude]} zoom={17} maxZoom={100}
+                                              style={ { height: "auto%", width: "auto"}}
+            center={[filteredName.latitude, filteredName.longitude]} zoom={17.5} maxZoom={100}
 
             zoomControl={true}  
             className={classes.map} 
@@ -825,14 +897,16 @@ const changeHandlerText = (event) => setNewText(event.target.value)
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-                <FeatureGroup >
+                <FeatureGroup ref={editRef}>
                     <EditControl
                     ref={editRef}
-                    position='topright'
+                    position='bottomright'
                    onCreated={onShapeDrawn}
+                   onMounted={onMounted}
                     //onCreated={_onCreate}
                   onEdited={_onEdited}
                   onDeleted={_onDeleted}
+                  
                     //here you can specify your shape options and which handler you want to enable
                     draw={{
                         rectangle: false,
@@ -848,6 +922,7 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                          }
                     }}
                     />
+                     
                 </FeatureGroup>
                 {filteredName.floors.map((floor, index) => (
                  
@@ -857,11 +932,11 @@ const changeHandlerText = (event) => setNewText(event.target.value)
           <Polygon positions={floor.boundaries} color={floor.color} 
                              />
 {
-   floor.blocks.map((block, ind) => (
-    <Polygon positions={block.bounds}>
+   floor.blocks.map((block) => (
+    <Polygon key={block.id} positions={block.bounds}>
     
         <label position={block.center}>
-           <Tooltip permanent direction="center" > {block.description}</Tooltip> </label>
+           <Tooltip permanent direction="center" class="labelText"> {block.description}</Tooltip> </label>
        <Popup direction="center" >
        <Button
                 
@@ -871,14 +946,7 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                 >
                      Edit
                 </Button>
-                {/* <Button
                 
-                className="btn btn-primary"
-                onClick={handleFloorReset}
-
-                >
-                     Reset
-                </Button> */}
                 <Modal isOpen={editBlock} toggle={() => toggleBlock("editBlock")} className="modal-sm">
                         <ModalHeader className="btn btn-primary" toggle={() => toggleBlock("editBlock")}>Are you sure you want to edit the block</ModalHeader>
                         <ModalBody>
@@ -893,6 +961,7 @@ const changeHandlerText = (event) => setNewText(event.target.value)
 
       
     </Polygon> 
+    
                              
                              
 
@@ -912,7 +981,7 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                 <Button 
                 className="btn btn-primary"
                 
-                    disabled={filteredName.floors.length>2}
+                    // disabled={filteredName.floors.length>2}
                     variant="contained"
                     onClick={onBlockDrawn}>
                     
@@ -995,6 +1064,7 @@ const changeHandlerText = (event) => setNewText(event.target.value)
                              </Col> 
                              
                              </Row>
+                             </Row>
                              
 
 
@@ -1006,6 +1076,10 @@ const changeHandlerText = (event) => setNewText(event.target.value)
   
                   ))} 
                   
+                  
+                  </CardBody>
+
+</Card>
                    
                    </div>)
 }

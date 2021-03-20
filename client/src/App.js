@@ -21,7 +21,8 @@ import "./App.css";
 import Map1 from "./components/dashboard/Map1";
 //import FloorMap from "./components/dashboard/FloorMap";
 import FloorMap from "./components/dashboard/FloorMap";
-import EditFloormap from "./components/dashboard/EditFloormap"
+import EditFloormap from "./components/dashboard/EditFloormap";
+//import Routing from "./components/dashboard/Routing";
 
 
 // Check for token to keep user logged in
@@ -57,6 +58,7 @@ class App extends Component {
             <Route path="/FloorMap/:refnum" component={FloorMap} /> 
             <Route exact path="/EditFloormap/:refnum" component={EditFloormap} />
             <Route exact path="/modaltemplate" component={ModalTemplate} />
+            {/* <Route exact path="/routing" component={Routing}/> */}
             {/* <Route path="/MazeMap" component={MazeMapWrapper} /> */}
 
             <Switch>

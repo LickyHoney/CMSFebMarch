@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import DisplayEntries from "./DisplayEntries"
 import service from "./services.js";
 import { CardBody,Card } from 'reactstrap';
+import L from 'leaflet';
 
 import { Polygon, Popup, Rectangle, Marker, TileLayer } from "react-leaflet";
 import { Link } from "react-router-dom";
@@ -20,6 +21,14 @@ import { Icon, marker } from "leaflet";
 import { SelectionState } from "@devexpress/dx-react-grid";
 //import EditFloormap from "./EditFloormap";
 import history from"./history"
+import { renderToStaticMarkup } from "react-dom/server";
+import { divIcon } from "leaflet";
+import '../../../node_modules/leaflet/dist/leaflet.css';
+import icon from '../../../node_modules/leaflet/dist/images/marker-icon.png';
+import iconShadow from '../../../node_modules/leaflet/dist/images/marker-shadow.png';
+
+
+
 const Map1  = () => {
   
     
@@ -149,7 +158,10 @@ const [searchTerm, setSearchTerm] = useState("");
   //     (item.name && item.name.toLowerCase().includes(search))
   //   )
   //  });
-
+  let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow
+});
 
 const handleDelete = (id, nameToBeDeleted,e) => {
   if (window.confirm(`Delete ${nameToBeDeleted}?`)) {
@@ -204,24 +216,31 @@ const handleUpdate = (id, nameToBeDeleted,e) => {
   const togglePopup = () => {
     setIsOpen(!isOpen);
   }
+  const iconMarkup = renderToStaticMarkup(
+    <i class="fas fa-building" />
+   
+  );
+  const customMarkerIcon = divIcon({
+    html: iconMarkup
+  });
   return (
 
 
           
+<div id="container">
 
 
 
-
-<Card>
-  <CardBody>    
-<Row className="iq-example-row">
+<Card id="container">
+  <CardBody id="container">    
+<Row className="iq-example-row" id="container">
 
 
 
                 
                
 <Row className="row">
-<Col className="col-3">
+<Col className="col-5">
 {/* <div className="btn" onClick={this.togglePopup}>
       <button>New User?</button>
       </div>
@@ -283,7 +302,7 @@ Search for:
 </Col>
 <Col className="col-7">
 <Map
-                                            style={ { height: "500px", width: "100%"}}
+                                            style={ { height: "auto%", width: "auto"}}
                                             
                                             center={[60.21679719545689, 24.810291821854594]} zoom={12} maxZoom={100}
                                             
@@ -298,7 +317,10 @@ Search for:
                                     markers.map((item, index) => (
                                        
                                         <Marker   
+                                        icon = {DefaultIcon}
+                                        
                                                 position={[item.latitude,item.longitude]}
+                                                
                                                 onMouseOver={(e) => {
                                                     e.target.openPopup();
                                                   }}
@@ -321,6 +343,7 @@ Search for:
 </Row> 
 </CardBody>
 </Card>
+</div>
   );
 }
 
