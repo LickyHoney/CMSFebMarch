@@ -130,6 +130,8 @@ const ViewBuilding = (props) => {
 
   }
   let layers = [];
+  let i = 0;
+  
   useEffect(() => {
 
     service
@@ -145,10 +147,10 @@ const ViewBuilding = (props) => {
           
           let dataLayer = new L.GeoJSON(floor.features);
 
-          let i = 0;
+          
           let ml = mapLayers;
           ml =[];
-
+          
 
           dataLayer.eachLayer((layer) => {
             debugger;
@@ -164,14 +166,18 @@ const ViewBuilding = (props) => {
 
           ml.push(layers);
           setMapLayers(ml);
-
+          
 
         }
 
-        let dataLayer2 = new L.GeoJSON(selBuilding[0].floors[0]);
+        
+let dataLayer2 = new L.GeoJSON(selBuilding[0].floors);
         let loclLayer = customLayer;
-        loclLayer.push(dataLayer2.getLayers()[0]);
-        setCustomLayer(loclLayer);
+         
+
+        loclLayer.push(dataLayer2.getLayers());
+         let newLayer = loclLayer[0];
+        setCustomLayer(newLayer);
 
 
 
@@ -247,34 +253,75 @@ const ViewBuilding = (props) => {
                     />
                   </LayersControl.BaseLayer >
                   
+{
+
+                  markers.map((marker, index1) => (
 
 
+marker.floors.map((floor, index) => (
 
 
-                  {
-                    mapLayers.map((mLayer, jx1) => (
+                  
                     
-                      <LayersControl.Overlay checked={false} name="jhgdj" >
-                        <LayerGroup>
-                          {mLayer.map((layer, hx) => (
-
-                            <EditableLayer
-                              key={hx}
-                              layer={layer}
-
-                            />
-
-                          ))}
+                      // <LayersControl.Overlay checked={false} name={floor.description} >
+                      <LayersControl2 position="topright">
+                        <ControlledLayerItem
+                          checked={false}
+                          name={floor.description}
+                          group="floors"
+                        >
+                        {/* {layers.map((layer, i) => {
 
 
+  <EditableLayer
+    key={i}
+    layer={layer}
+    pathOptions={purpleOptions}
+    showDrawControl={i === selectedLayerIndex}
+    onLayerClicked={handleLayerClick}
+    mapRef={props.map}
+  />
 
-                        </LayerGroup>
-                      </LayersControl.Overlay>
-                    ))
 
-                  }
+})} */}
+                     
+                      
+                     <LayerGroup>
+                         { customLayer.map((layer, hx) => (
+                           
+
+                          <EditableLayer
+    key={hx}
+    layer={layer}
+    pathOptions={purpleOptions}
+    showDrawControl={hx === selectedLayerIndex}
+    onLayerClicked={handleLayerClick}
+    mapRef={props.map}
 
 
+
+   
+  />
+ 
+
+  ))}
+
+
+</LayerGroup>
+
+                  
+
+                      
+                        
+                   
+                    </ControlledLayerItem>
+                    </LayersControl2>
+                    // </LayersControl.Overlay>
+                      
+                    ))))}
+                    
+
+                   
 
 
                 </LayersControl>
