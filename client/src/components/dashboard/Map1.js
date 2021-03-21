@@ -188,7 +188,7 @@ const Map1 = () => {
                       onClick={() => handleDelete(item.id, item.description)}
                     > Delete </button></td>
 
-                    <td><Link to="/EditFloorMap/3" className="nav-link font-weight-bold ">edit</Link></td>
+                    <td><Link to="/EditBuilding/1" className="nav-link font-weight-bold ">edit</Link></td>
 
 
                     {/* <Link onClick={(e) => handleDelete(item.refnum, item.description, e)} className="nav-link font-weight-bold ">Delete</Link> */}

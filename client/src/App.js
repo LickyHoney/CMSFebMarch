@@ -23,6 +23,7 @@ import Map1 from "./components/dashboard/Map1";
 //import FloorMap from "./components/dashboard/FloorMap";
 import FloorMap from "./components/dashboard/FloorMap";
 import ViewBuilding from "./components/dashboard/ViewBuilding";
+import EditBuilding from "./components/dashboard/EditBuilding";
 
 import EditFloormap from "./components/dashboard/EditFloormap";
 //import Routing from "./components/dashboard/Routing";
@@ -59,9 +60,12 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
 
             <Route path="/FloorMap/:refnum" component={FloorMap} /> 
-            <Route exact path="/EditFloormap/:refnum" component={EditFloormap} />
+            {/* <Route exact path="/EditFloormap/:refnum" component={EditFloormap} /> */}
             <Route exact path="/modaltemplate" component={ModalTemplate} />
             <Route exact path="/ViewBuilding/:refnum" component={ViewBuilding} />
+            <Route exact path="/EditBuilding/:refnum" component={EditBuilding} />
+
+
             {/* <Route exact path="/routing" component={Routing}/> */}
             {/* <Route path="/MazeMap" component={MazeMapWrapper} /> */}
 

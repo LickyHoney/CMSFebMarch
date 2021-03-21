@@ -97,7 +97,7 @@ function EditableGroup(props) {
 }
 
 
-const ViewBuilding = (props) => {
+const EditBuilding = (props) => {
 
   const [markers, setMarkers] = useState([])
   const [details, setDetails] = useState('')
@@ -156,11 +156,12 @@ const ViewBuilding = (props) => {
   let i = 0;
   let floor = {};
   useEffect(() => {
-
+debugger;
     service
       .getBuilding(refno)
       .then(selBuilding => {
         console.log("returning", selBuilding)
+        
 
         setMarkers(selBuilding[0].floors);
         const detailsLcl = details;
@@ -318,4 +319,4 @@ const ViewBuilding = (props) => {
 }
 
 
-export default ViewBuilding;
+export default EditBuilding;

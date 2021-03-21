@@ -1,4 +1,4 @@
-import React, { Children, cloneElement, Component } from "react";
+import React, { Children, cloneElement, Component, useState } from "react";
 import ReactDOM from "react-dom";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -62,6 +62,8 @@ export class ControlledLayer extends Component {
 
 export class ControlledLayerItem extends ControlledLayer {
   constructor(props) {
+
+    
     super(props);
     this.contextValue = {
       ...props.leaflet,
@@ -71,7 +73,7 @@ export class ControlledLayerItem extends ControlledLayer {
       }
     };
   }
-
+backUpLayer = {};
   addLayer = layer => {
     this.layer = layer; // Keep layer reference to handle dynamic changes of props
     const { addGroupedLayer, checked, name, group } = this.props;
@@ -168,6 +170,7 @@ class LayerControl extends MapControl {
   }
 
   updateLeafletElement(fromProps, toProps) {
+      
     super.updateLeafletElement(fromProps, toProps);
     console.log(fromProps, toProps);
     // this.forceUpdate();
@@ -183,14 +186,28 @@ class LayerControl extends MapControl {
     const { layer, name, checked, group } = layerInput;
     console.log(layer, name, checked, group);
     let layers = { ...this.state.layers };
+
     layers[group] = layers[group].map(l => {
-      if (l.name === name) {
-        l.checked = !l.checked;
+    
+        if (l.name === name) {
+        l.checked = true;//!l.checked;
+        debugger;
+        for (var prop in this.props.leaflet.map._layers) {
+            console.log(this.props.leaflet.map._layers[prop]);
+        
+        }    
+
+        this.props.leaflet.map.addLayer(layer)
+       
+      }else{
+        l.checked = false;
+        
+        //this.removeLayer(layer)
       }
-      l.checked
-        ? this.props.leaflet.map.addLayer(layer) &&
-          console.log(name, "adding this layer")
-        : this.removeLayer(layer);
+
+    //   l.checked? this.props.leaflet.map.addLayer(layer) &&
+    //                 console.log(name, "adding this layer")
+    //     : this.removeLayer(layer);
 
       return l;
     });
