@@ -1,0 +1,173 @@
+{
+  "data": [
+    {
+      "link": "/ViewBuilding/1",
+      "id": "1",
+      "name": "Sello",
+      "description": "Sello Kauppakeskus",
+      "street": "Leppavarankatu",
+      "Apartment": "3",
+      "doornum": "3-9",
+      "pincode": "02600",
+      "region": "espoo",
+      "country": "Finland",
+      "latitude": "60.21846434365596",
+      "longitude": "24.811831922452843",
+      "boundary": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Polygon",
+          
+          "coordinates": [
+            [
+              [
+                24.807900278524937,
+                60.21903556116963
+              ],
+              [
+                24.813836840058975,
+                60.21885707063582
+              ],
+              [
+                24.813747499584,
+                60.21738231819004
+              ],
+              [
+                24.810506944767635,
+                60.21709088811956
+              ],
+              [
+                24.807767551327068,
+                60.21724983450939
+              ]
+            ]
+          ]
+        }
+      },
+      "floors": [
+        {
+          "type": "FeatureCollection",
+          "name":"f1",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "features": [
+            {
+              "type": "Feature",
+              "properties": {
+                "id": 1,
+                "ground": 1,
+                "length": 100,
+                "width": 60
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      24.807900278524937,
+                      60.21903556116963
+                    ],
+                    [
+                      24.813836840058975,
+                      60.21885707063582
+                    ],
+                    [
+                      24.813747499584,
+                      60.21738231819004
+                    ],
+                    [
+                      24.810506944767635,
+                      60.21709088811956
+                    ],
+                    [
+                      24.807767551327068,
+                      60.21724983450939
+                    ]
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "properties": {
+                "id": 2,
+                "ground": 2,
+                "length": 120,
+                "width": 80
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      24.809023749880204,
+                      60.21901563635899
+                    ],
+                    [
+                      24.81371426186838,
+                      60.21872422816196
+                    ],
+                    [
+                      24.813581794901584,
+                      60.21766437337742
+                    ],
+                    [
+                      24.809293929059198,
+                      60.21772096873196
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "FeatureCollection",
+          "name":"f2",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "features": [
+            {
+              "type": "Feature",
+              "properties": {
+                "id": 1,
+                "ground": 1,
+                "length": 100,
+                "width": 60
+              },
+              "geometry": {
+                "type": "Polygon",
+                "color": "red",
+                "coordinates": [
+                  [
+                    [
+                      24.807900278524937,
+                      60.21903556116963
+                    ],
+                    [
+                      24.813836840058975,
+                      60.21885707063582
+                    ],
+                    [
+                      24.813747499584,
+                      60.21738231819004
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

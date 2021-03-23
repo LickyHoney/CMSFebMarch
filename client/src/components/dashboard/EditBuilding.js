@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState, useMap } from "react";
 import service from './services';
 import { EditControl } from "react-leaflet-draw";
 import LayersControl2, { ControlledLayerItem } from "./LayerControl2";
-
+import "./assets/leaflet.css"
+import "./assets/leaflet.draw.css"
 import {
   Map, TileLayer, FeatureGroup, useLeaflet, LayersControl, Marker, Polygon,
   Popup, LayerGroup, Circle, GeoJSON
@@ -12,113 +13,158 @@ import Control from 'react-leaflet-control';
 import L from "leaflet";
 
 import { CardBody, Card, ButtonGroup, ButtonToolbar, Form, FormGroup, Label, Input, ModalHeader, Modal, ModalBody, ModalFooter } from 'reactstrap';
-
+// Material components
+import { makeStyles, Button } from "@material-ui/core";
+import { set } from "mongoose";
 function EditableLayer(props) {
-  const leaflet = useLeaflet();
-  const editLayerRef = React.useRef();
-  const mapRef = props.mapRef;
-
-  let drawControlRef = React.useRef();
-
-  let { map } = leaflet;
-
-  useEffect(() => {
-
-    if (!props.showDrawControl) {
-      map.removeControl(drawControlRef.current);
-    } else {
-      map.addControl(drawControlRef.current);
+    const leaflet = useLeaflet();
+    const editLayerRef = React.useRef();
+    let drawControlRef = React.useRef();
+    let {map} = leaflet;
+  
+    useEffect(() => {
+      
+      if (!props.showDrawControl) {
+        map.removeControl(drawControlRef.current);
+      } else {
+        map.addControl(drawControlRef.current);
+      }
+  
+      editLayerRef.current.leafletElement.clearLayers();
+  
+      editLayerRef.current.leafletElement.addLayer(props.layer);
+      props.layer.on("click", function (e) {
+        props.onLayerClicked(e, drawControlRef.current);
+      });
+    }, [props, map]);
+  
+    function onMounted(ctl) {
+      drawControlRef.current = ctl;
     }
-
-    editLayerRef.current.leafletElement.clearLayers();
-
-    editLayerRef.current.leafletElement.addLayer(props.layer);
-    props.layer.on("click", function (e) {
-      props.onLayerClicked(e, drawControlRef.current);
-    });
-  }, [props, map]);
-
-  function onMounted(ctl) {
-    drawControlRef.current = ctl;
-  }
-
-  return (
-    <div>
-      <FeatureGroup ref={editLayerRef}>
-        <EditControl
-          position="bottomright"
-          onMounted={onMounted}
-          {...props}
-        />
-      </FeatureGroup>
-    </div>
-  );
-}
-
-function EditableGroup(props) {
-
-  const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
-
-  function handleLayerClick(e, drawControl) {
-    setSelectedLayerIndex(e.target.feature.properties.editLayerId);
-  }
-
-
-
-
-  let dataLayer = new L.GeoJSON(props.data);
-  let layers = [];
-  let i = 0;
-  dataLayer.eachLayer((layer) => {
-    layer.feature.properties.editLayerId = i;
-    layer.pathOptions = { color: 'red' };
-    layers.push(layer);
-    i++;
-  }).bind(this);
-  const purpleOptions = { color: 'purple' }
-  return (
-    <div>
-      {layers.map((layer, i) => {
-
-        return (
-          <EditableLayer
-            key={i}
-            layer={layer}
-            pathOptions={purpleOptions}
-            showDrawControl={i === selectedLayerIndex}
-            onLayerClicked={handleLayerClick}
-            mapRef={props.map}
+  
+    return (
+      <div>
+         <FeatureGroup ref={editLayerRef}>
+          <EditControl
+            position="topright"
+            onMounted={onMounted}
+            {...props}
           />
-        );
+        </FeatureGroup> 
+      </div>
+    );
+  }
 
-      })}
-    </div>
-  );
-}
 
+const useStyles = makeStyles(theme => ({
+  map: ({
+    height: `calc(90vh - 90px)`,
+    width: '60%',
+    zIndex: 0
+  }),
+  buttonWrapper: {
+    zIndex: 1,
+    position: "absolute",
+    bottom: theme.spacing(2),
+    marginLeft: "30%",
+    marginBottom: "8%",
+    transform: "translateX(-50%)",
+  },
+  headerWrapper: {
+    zIndex: 1,
+    marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(1),
+  }
+}));
 
 const EditBuilding = (props) => {
-
+  const editRef = useRef();
+  const [drawing, setDrawing] = useState(false);
   const [markers, setMarkers] = useState([])
   const [details, setDetails] = useState('')
+  const [boundary, setBoundary] = useState([]);
   const [newPosition, setNewPosition] = useState([])
 
-  const [mapLayers, setMapLayers] = useState([]);
-  const [customLayer, setCustomLayer] = useState('');
-  const purpleOptions = { color: 'purple' }
+  const [mapLayers, setMapLayers] = useState('');
+  const [customLayer, setCustomLayer] = useState([]);
+  
+  const [activeFloorPolygons, setActiveFloorPolygons] = useState([]);
+  const [activeFloorBoundary, setActiveFloorBoundary] = useState([]);
+  const [activeFloor, setActiveFloor] = useState('');
+  const [ newDesc, setNewDesc ] = useState('');
+  const [isEdit, setIsEdit] = useState('');
+  const [ boundaryid, setBoundaryid] = useState(0);
+  
+  
+  //const purpleOptions = { color: 'purple' }
   const mapRef = useRef();
   const fgRef = useRef();
   const refno = window.location.pathname.replace('/ViewBuilding/', '');
-  const polygon = [
+  const leaflet = useLeaflet();
+
+   
     
+  
+  const polygon = [
+
   ]
   const center = [51.505, -0.09]
   const rectangle = [
     [51.49, -0.08],
     [51.5, -0.06],
   ]
+//   function EditableGroup(props) {
 
-  const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+    const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+  
+//     function handleLayerClick(e, drawControl) {
+//       setSelectedLayerIndex(e.target.feature.properties.editLayerId);
+//     }
+  
+  
+  
+  
+//     let dataLayer = new L.GeoJSON(props.markers);
+//     let layers1 = [];
+//     let id = 0;
+//     dataLayer.eachLayer((layer) => {
+//       boundaryid= id;
+//       layer.pathOptions = { color: 'red' };
+//       layers1.push(layer);
+//       id++;
+//     });
+//     const purpleOptions = { color: 'purple' }
+//     return (
+//       <div>
+//         {activeFloorPolygons.map((layer, i) => {
+  
+//           return (
+//             <EditableLayer
+//               key={i}
+//               layer={layer}
+//               pathOptions={purpleOptions}
+//               showDrawControl={i === selectedLayerIndex}
+//               onLayerClicked={handleLayerClick}
+//               mapRef={props.map}
+//             />
+//           );
+  
+//         })}
+//       </div>
+//     );
+//   }
+
+  const updateFloor = {
+
+    floorno: markers.length+1,
+    description: "newDesc",
+    color: '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6),
+    blocks: [],
+    boundaries: []
+  }
+
+  //const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+  const [addFloor, setAddFloor] = useState(false);
 
   const _onFeatureGroupReady = (ref) => {
     if (ref !== undefined && ref !== null) {
@@ -128,21 +174,164 @@ const EditBuilding = (props) => {
       }
     }
   }
+  const handleDrawPolygonClick = (e) => {
+      const activeFloorLcl = activeFloor;
+        const polygonType = e.target.value;
+        debugger;
+        switch (polygonType) {
+            case "BO":
 
-  function onFloorSelect(e, data) {
-    const index = e.target.value;
-    // let localFloorLayers = customLayer;
-    // localFloorLayers = mapLayers[0].layers.getLayers()[0];
-    //localFloorLayers= [];
-    // localFloorLayers.push(mapLayers[index].layers);
-    setCustomLayer(markers[index]);
+                 break;
 
-
+            case "BL":
+                
+                break;
+        
+            default:
+                break;
+        } 
+      if (activeFloorLcl !== undefined && activeFloorLcl !== null){
+          if(activeFloorLcl.boundaries.length > 3){
+            const { layerType, layer } = e;
+            if (layerType === "polygon") {
+              const { _leaflet_id } = layer;
+              setMapLayers((layers) => [
+                ...layers,
+            { id: _leaflet_id, latlngs: layer.getLatLngs()[0] },
+        
+              // [ id: _leaflet_id, latlng:layer.getLatLngs()[0] ]  ,
+              ]);
+            }
+              //Edit this method to perform other actions
     debugger;
+    if (!drawing) {
+      editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
+    } else {
+      editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
+      editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
+    }
+    debugger;
+    setDrawing(!drawing)
+              
+          }
+
+      }
+      
+
+    
+  }
+  //let dataLayer = new L.GeoJSON(props.data);
+  
+  
+  
+  const onShapeDrawn = (e) => {
+      debugger;
+    setDrawing(false)
+    const { layerType, layer } = e;
+  if (layerType === "polygon") {
+    const { _leaflet_id } = layer;
+
+  }
+  debugger;
+  
+  const mar = markers;
+ 
+  for (var k = 0; k < mar.length; k++) { 
+    
+let boundary_id = boundaryid;
+       
+ boundary_id = layer._leaflet_id;
+  
+ 
+  setBoundaryid(boundary_id);
+  console.log(boundaryid);
+  
+
+  debugger;
+    }
+    
+
+    
+    
+
+
+
+    // e.layer.on('click', () => {
+    //     debugger;
+    //     setDrawing(layer);
+    //     //setSelectedLayerIndex(e.target.boundaryid);
+    //     console.log(selectedLayerIndex);
+    //     debugger;
+    //   editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+    // })
+    e.layer.on('contextmenu', () => {
+      //do some contextmenu action here
+    })
+    e.layer.bindTooltip("Text",
+      {
+        className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
+        sticky: true,
+        direction: 'right'
+      }
+    );
   }
   function handleLayerClick(e, drawControl) {
-    setSelectedLayerIndex(e.target.feature.properties.editLayerId);
+    
+      debugger;
+      const { layerType, layer } = e;
+  if (layerType === "polygon") {
+    const { _leaflet_id } = layer;
+
   }
+  
+  let drawingLcl = drawing;
+  drawingLcl = layer;
+  setDrawing(drawingLcl);
+//   setSelectedLayerIndex(e.target.boundaryid);
+//     console.log(selectedLayerIndex);
+
+      
+      
+           
+
+    debugger;
+  //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+  
+        }
+
+//   e.layer.on('click', () => {
+//     debugger;
+//     setSelectedLayerIndex(e.target.boundaryid);
+//     console.log(selectedLayerIndex);
+//     debugger;
+//   editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+// })
+ 
+  function onEditPath() {
+    debugger;
+  }
+  function onCreate() {
+    debugger;
+  }
+
+  function onDeleted() {
+    debugger;
+  }
+  function onFloorSelect(e, data) {
+    const index = e.target.value;
+    let localFloorLayers = customLayer;
+    //localFloorLayers = mapLayers[0].layers.getLayers()[0];
+    //localFloorLayers= [];
+    //localFloorLayers.push(mapLayers[index].layers);
+    debugger;
+    setActiveFloorPolygons(markers[index].blocks);
+    setActiveFloorBoundary(markers[index].boundaries);
+    setActiveFloor(markers[index]);
+
+
+  }
+  
+  
 
   const addressCardStyle = {
     backgroundImage: `url(${require('./33.png')})`,
@@ -152,78 +341,159 @@ const EditBuilding = (props) => {
     height: "423px",
 
   }
-  let layers = [];
-  let i = 0;
+  
   let floor = {};
   useEffect(() => {
-debugger;
+
+    var refTemp = refno.replace("/EditBuilding/", "");
     service
-      .getBuilding(refno)
+      .getBuilding(refTemp)
       .then(selBuilding => {
         console.log("returning", selBuilding)
-        
 
+        debugger;
         setMarkers(selBuilding[0].floors);
-        const detailsLcl = details;
-        
-          setDetails(selBuilding[0]);  
+        setActiveFloor(selBuilding[0].floors[0]);
+        setActiveFloorBoundary(selBuilding[0].floors[0].boundaries);
+        setActiveFloorPolygons(selBuilding[0].floors[0].blocks);
+
+
+        setDetails(selBuilding[0]);
+        // setBoundary(selBuilding[0].boundary.geometry.coordinates[0]);
+
         let ml = mapLayers;
-        ml = [];
+        
 
-
-        for (let ix = 0; ix < selBuilding[0].floors.length; ix++) {
-          floor = selBuilding[0].floors[ix];
-
-          let dataLayer = new L.GeoJSON(floor.features);
-          //let ml = mapLayers;
-
-          // dataLayer.eachLayer((layer) => {
-          //   //layer.data = floor;
-          //   layer.feature.properties.editLayerId = i;
-          //   layer.pathOptions = { color: 'red' };
-          //   layers.push(layer);
-          //   i++;
-          // });
-
-          ml.push({ layers: dataLayer, floor: floor });
-
-        }
-
-
-        setMapLayers(ml);
-        // let dataLayer2 = new L.GeoJSON(selBuilding[0].floors);
-        //         let loclLayer = customLayer;
-
-
-        //         loclLayer.push(dataLayer2.getLayers());
-        //          let newLayer = loclLayer[0];
-        //         setCustomLayer(newLayer);
-
-
-
+   
+        
       })
+   
   }, [])
 
+  function toggle() {
+    setAddFloor(!addFloor);
+  }
 
+  const moveActiveFloor = ()=> {
+    const markersLcl = markers;
+    debugger;
+    if(activeFloor!==undefined && activeFloor!==null){
+        for (let i=0; i<markersLcl.length; i++){
 
-  // useEffect(() => {
+            if(activeFloor.floorno===markersLcl[i].floorno){
+                markersLcl[i].description = activeFloor.description;
+                markersLcl[i].blocks = activeFloor.blocks;
+                markersLcl[i].boundaries = activeFloor.boundaries;
 
+            }
+        }
+        setMarkers(markersLcl);
+    }
 
-  //     service
-  //         .getBuilding(refno)
-  //         .then(latlng => {
-  //             //console.log(LayersControl.getActiveBaseLayer().name)
-  //          //   console.log("returning", latlng)
+  }
+  const _onCreate = (e) => {
+    console.log(e);
+  
+    const { layerType, layer } = e;
+    if (layerType === "polygon") {
+      const { _leaflet_id } = layer;
+  
+      setMapLayers((layers) => [
+        ...layers,
+        { id: _leaflet_id, latlngs: layer.getLatLngs()[0] },
+      ]);
+    }
+  };
+  
+  
+  const _onEdited = (e) => {
+      debugger;
+    // console.log(e);
+    // const {
+    //   layers: { _layers },
+    // } = e;
+  
+    // Object.values(_layers).map(({ _leaflet_id, editing }) => {
+    //   setMapLayers((layers) =>
+    //     layers.map((l) =>
+    //       l.id === _leaflet_id
+    //         ? { ...l, latlngs: { ...editing.latlngs[0] } }
+    //         : l
+    //     )
+    //   );
+    // });
+  };
+  
+  const _onDeleted = (e) => {
+    console.log(e);
+    const {
+      layers: { _layers },
+    } = e;
+  
+    Object.values(_layers).map(({ _leaflet_id }) => {
+      setMapLayers((layers) => layers.filter((l) => l.id !== _leaflet_id));
+    });
+  };
 
-  //             setMarkers(...markers, latlng)
-  //             //setMarkers(latlng[0])
-  //             console.log("markers", markers)
+  const deleteActiveFloor = () => {
+      debugger;
+      const activeFloorLocal = activeFloor;
+      const markersL = markers;
+      const markersAfterDeletion = [];
+      for (let j = 0; j < markersL.length; j++) {
+          const marker = markersL[j];
+          if (marker.floorno !== activeFloorLocal.floorno){
+              markersAfterDeletion.push(marker);
+          }
+          
+      }
+      setMarkers(markersAfterDeletion);
+      setActiveFloorPolygons(markersAfterDeletion[0].blocks);
+      setActiveFloorBoundary(markersAfterDeletion[0].boundaries);
+      setActiveFloor(markersAfterDeletion[0]);
+      
+  }
+  
 
+  const handleAddFloor = () => {
+    debugger;
+    const newFloor = {
+        "floorno": markers.length+1,
+        "description": newDesc,
+        "color": "#f18d00",
+        "blocks": [],
+        "boundaries": [] 
+      }
+      setActiveFloor(newFloor);
+      setActiveFloorBoundary(newFloor.boundaries);
+    setActiveFloorPolygons(newFloor.blocks);
+    const markersLocal = markers;
+    markersLocal.push(newFloor);
+    setMarkers(markersLocal);
+    
+    setNewDesc("");
+   }
+  
 
-  //         })
+  const changeHandlerDesc = (event) => setNewDesc(event.target.value);
+  const updateIsEdit = (e, value) => setIsEdit(value);
 
+  const handleSaveFloor = (e) => {
+    e.preventDefault()
+    debugger;
 
-  // }, [])
+    service
+    .updateBuilding(markers[0].id, markers[0])
+    
+  }
+
+  const handleEditPolygonClick = (e) => {
+    const drawingLocal = drawing;
+      debugger;
+      
+  }
+  
+
 
   return (
 
@@ -233,25 +503,117 @@ debugger;
 
         <div className="col-lg-4">
           <div className="iq-card iq-card-block iq-card-stretch iq-card-height bg-transparent">
-            <div className="iq-card-body rounded p-0" style={addressCardStyle} >
-              <div className="iq-caption">
-                <h1>{details.name}</h1>
-                <h3>{details.description}</h3>
-                <h3>{details.Apartment} {markers.street}</h3>
-                <h3>{details.region} {markers.pincode}</h3>
-                <h3>{details.country}</h3>
-              </div>
-            </div>
+            
+            <FormGroup className="form-group">
+                                              <Label htmlFor="exampleInputReadonly">Building Id</Label>
+                                              <Input type="text" className="form-control" id="exampleInputReadonly"
+                                              readOnly="" defaultValue={details.id} disabled/>
+                                              </FormGroup>
+                                             
+                                              <FormGroup className="form-group">
+                                              <Label htmlFor="exampleInputReadonly">Building Name</Label>
+                                              <Input type="text" className="form-control" id="exampleInputReadonly"
+                                              readOnly="" defaultValue={details.description} />
+                                              </FormGroup>
+                                            
+                                              <FormGroup className="form-group">
+                                              <Label htmlFor="exampleInputReadonly">Street</Label>
+                                              <Input type="text" className="form-control" id="exampleInputReadonly"
+                                              readOnly="" defaultValue={details.street} />
+                                              </FormGroup>
+
+                                              <FormGroup className="form-group">
+                                              <Label htmlFor="exampleInputReadonly">Apartment</Label>
+                                              <Input type="text" className="form-control" id="exampleInputReadonly"
+                                              readOnly="" defaultValue={details.Apartment} />
+                                              </FormGroup>
+
+
+                                              <FormGroup className="form-group">
+                                              <Label htmlFor="exampleInputReadonly">Doornum</Label>
+                                              <Input type="text" className="form-control" id="exampleInputReadonly"
+                                              readOnly="" defaultValue={details.doornum} />
+                                              </FormGroup>
+
+
+                                              <FormGroup className="form-group">
+                                              <Label htmlFor="exampleInputReadonly">Region</Label>
+                                              <Input type="text" className="form-control" id="exampleInputReadonly"
+                                              readOnly="" defaultValue={details.region} />
+                                              </FormGroup>
+
+                                              <FormGroup className="form-group">
+                                              <Label htmlFor="exampleInputReadonly">Country</Label>
+                                              <Input type="text" className="form-control" id="exampleInputReadonly"
+                                              readOnly="" defaultValue={details.country} />
+
+</FormGroup>
+           
           </div>
         </div>
 
 
         <div className="col-lg-8">
           <div className="iq-card overflow-hidden">
-
+          <h1 className="display-4">{activeFloor.description}</h1>
+          
             <div id="home-chart-02">
               <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
+              <Control position="topright">
+              {/* <button class="primary" onClick={handleDrawPolygonClick} value="BO"
+                    style={{ "font-size": "1.5rem", "margin-left": ".05rem" ,"margin-right": ".05rem" }}>
+                    Add Floor
+                        </button> */}
+<Button className="btn btn-primary" 
+style={{"font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem"}} color="primary" onClick={handleSaveFloor}> SaveBuilding </Button>
 
+                        
+<Button className="btn btn-primary" style={{"font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem"}} color="primary" onClick={() => toggle("addFloor")}> AddFloor </Button>{' '}
+
+
+<Modal isOpen={addFloor} toggle={() => toggle("addFloor")} className="modal-sm">
+<ModalHeader className="btn btn-primary"  toggle={() => toggle("addFloor")}>Add Floor</ModalHeader>
+<ModalBody>
+
+  
+  <p>Floor: {markers.length+1}</p>
+  
+    <p>Enter Floor Description</p>
+    <input type="text" onChange={changeHandlerDesc} value={newDesc} 
+    lur={updateIsEdit}/>
+
+</ModalBody>
+<ModalFooter>
+
+<Button color="primary" onClick={() => {
+  toggle("addFloor");
+  // handleAddFloor(); 
+  handleAddFloor();
+
+}}>OK</Button>{' '}
+<Button color="secondary" onClick={() => toggle("addFloor")}>Cancel</Button>
+</ModalFooter>
+</Modal> 
+
+                        <button class="btn btn-primary" onClick={deleteActiveFloor} value="BO"
+                    style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem"  }}>
+                    Delete Floor
+                        </button>
+                  <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BO"
+                    style={{ "font-size": "1.0rem", "margin-left": ".05rem",  "margin-right": ".05rem"  }}>
+                    Manage Boundary
+                        </button>
+
+                  <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BL"
+                    style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
+                    AddBlock
+                        </button>
+
+                        <button class="btn btn-primary" onClick={handleEditPolygonClick} 
+                    style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
+                    EditBlock
+                        </button>
+                </Control>
                 <LayersControl position="topright">
                   <LayersControl.BaseLayer
                     checked={false}
@@ -275,34 +637,75 @@ debugger;
                   </LayersControl.BaseLayer >
 
                 </LayersControl>
+                
+                <FeatureGroup>
+                  
+                  {activeFloorPolygons.map((polygonObj,polyIdx)=>(
+                      <div>
+                      <EditControl
+                      
+                      position='topleft'
+                      onCreated={onShapeDrawn}
+                      onEdited = {_onEdited}
+                      onDeleted = {_onDeleted}
+                      
+                      
+                      
+                      //here you can specify your shape options and which handler you want to enable
+                      draw={{
+                        rectangle: false,
+                        polygon: true,
+                        circle: false,
+                        polyline: false,
+                        circlemarker: false,
+                        marker: false
+  
+                      }}
 
-                <GeoJSON key={Math.random()}
-                  data={customLayer}
-                ></GeoJSON>
+                    >
+  
+  
+  
+  
+                    </EditControl>
 
-                <GeoJSON key={Math.random()}
-                  data={details.boundary}
-                ></GeoJSON>
+                    <Polygon positions={polygonObj.bounds} ></Polygon>
+                    </div>
+                    
+                  ))}
+                <Polygon positions={activeFloorBoundary} onClick={handleLayerClick}> </Polygon>
+
+                {/* <EditableGroup data={markers} /> */}
+
+                </FeatureGroup>
                
 
+
+
                 <Control position="topright" >
-                  {
-                    markers.map((mLr, didx) => (
+                  <div>
+                    {
+                      markers.map((mLr, didx) => (
 
 
 
-                      <div>
+                        <div>
 
-                        <button class="primary" value={didx} onClick={onFloorSelect} style={{"font-size": "1.5rem","margin-left":".05rem"}}>
-                          {mLr.name}
-                        </button>
+                          <button class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
+                            {mLr.floorno}
+                          </button>
 
-                       
-                      </div>
-                    ))
 
-                  }
+                        </div>
+                      ))
+
+                    }
+
+                  </div>
                 </Control>
+
+
+
 
 
               </Map>

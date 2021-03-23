@@ -1,8 +1,9 @@
-import React, { useRef, useEffect, useState, useMap } from "react";
+import React, { useRef, useEffect, useState, useMap, createRef } from "react";
 import service from './services';
 import { EditControl } from "react-leaflet-draw";
 import LayersControl2, { ControlledLayerItem } from "./LayerControl2";
-
+import 'leaflet-editable';
+import ReactLeafletEditable from 'react-leaflet-editable';
 import {
   Map, TileLayer, FeatureGroup, useLeaflet, LayersControl, Marker, Polygon,
   Popup, LayerGroup, Circle, GeoJSON
@@ -109,6 +110,37 @@ const ViewBuilding = (props) => {
   const mapRef = useRef();
   const fgRef = useRef();
   const refno = window.location.pathname.replace('/ViewBuilding/', '');
+  const mRef = createRef();
+  const eRef= createRef();
+  const leaflet = useLeaflet();
+  const editLayerRef = React.useRef();
+  //const mapRef = props.mapRef;
+
+  let drawControlRef = React.useRef();
+
+  let { map } = leaflet;
+
+  useEffect(() => {
+
+    if (!props.showDrawControl) {
+      map.removeControl(drawControlRef.current);
+    } else {
+      map.addControl(drawControlRef.current);
+    }
+
+    editLayerRef.current.leafletElement.clearLayers();
+
+    editLayerRef.current.leafletElement.addLayer(props.layer);
+    props.layer.on("click", function (e) {
+      props.onLayerClicked(e, drawControlRef.current);
+    });
+  }, [props, map]);
+
+  function onMounted(ctl) {
+    drawControlRef.current = ctl;
+  }
+
+
   const polygon = [
     
   ]
@@ -128,6 +160,10 @@ const ViewBuilding = (props) => {
       }
     }
   }
+
+ const editPolygon = () => {
+    eRef.current.startPolygon()
+}
 
   function onFloorSelect(e, data) {
     const index = e.target.value;
@@ -223,6 +259,18 @@ const ViewBuilding = (props) => {
 
 
   // }, [])
+  var selectedFeature = null;
+//edit the targeted polygon
+function onEachFeature1 () {
+  debugger;
+     //mapLayers.addLayer(layer);
+     mapLayers.on('click', function(e){
+          if(selectedFeature)
+               selectedFeature.editing.disable();
+          selectedFeature = e.target;
+          e.target.editing.enable();
+     });
+}
 
   return (
 
@@ -249,6 +297,9 @@ const ViewBuilding = (props) => {
           <div className="iq-card overflow-hidden">
 
             <div id="home-chart-02">
+            <ReactLeafletEditable
+                ref={mRef}
+             >
               <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
 
                 <LayersControl position="topright">
@@ -277,13 +328,25 @@ const ViewBuilding = (props) => {
 
                 <GeoJSON key={Math.random()}
                   data={customLayer}
+                  onEachFeature ={onEachFeature1}
                 ></GeoJSON>
 
                 <GeoJSON key={Math.random()}
                   data={details.boundary}
                 ></GeoJSON>
-               
+              {/* <LayersControl2 position="topright">
+                <LayerGroup>
 
+               <EditableLayer
+            key={i}
+            layer={mapLayers}
+            pathOptions={purpleOptions}
+            showDrawControl={i === selectedLayerIndex}
+            onLayerClicked={handleLayerClick}
+            mapRef={props.map}
+          />
+          </LayerGroup>
+          </LayersControl2> */}
                 <Control position="topright" >
                   {
                     markers.map((mLr, didx) => (
@@ -295,16 +358,22 @@ const ViewBuilding = (props) => {
                         <button class="primary" value={didx} onClick={onFloorSelect} style={{"font-size": "1.5rem","margin-left":".05rem"}}>
                           {mLr.name}
                         </button>
+                        
 
                        
                       </div>
                     ))
 
                   }
+                  <button
+                        onClick={onEachFeature1}
+                        className="editable-btn"
+                    >polygon</button>
                 </Control>
 
 
               </Map>
+              </ReactLeafletEditable>
             </div>
           </div>
         </div>
