@@ -165,9 +165,7 @@ p {
   font-size: 0.875em;
 }
 
-.leaflet-draw-draw-polygon {
-  display: none !important;
-}
+
 .sr-only {
   display: none;
 }
