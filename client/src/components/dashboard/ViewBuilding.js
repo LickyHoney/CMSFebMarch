@@ -45,10 +45,10 @@ function EditableLayer(props) {
   const leaflet = useLeaflet();
   const editLayerRef = React.useRef();
   let drawControlRef = React.useRef();
-  let {map} = leaflet;
+  let { map } = leaflet;
 
   useEffect(() => {
-    
+
     if (!props.showDrawControl) {
       map.removeControl(drawControlRef.current);
     } else {
@@ -103,7 +103,7 @@ function EditableGroup(props) {
           <EditableLayer
             key={i}
             layer={layer}
-            
+
             onLayerClicked={handleLayerClick}
           />
         );
@@ -153,7 +153,7 @@ const ViewBuilding = (props) => {
 
 
 
-  
+
 
   const updateFloor = {
 
@@ -414,10 +414,30 @@ const ViewBuilding = (props) => {
 
         debugger;
         setMarkers(selBuilding[0].floors);
-        setActiveFloor(selBuilding[0].floors[0]);
-        setActiveFloorBoundary(selBuilding[0].floors[0].boundaries);
-        setActiveFloorPolygons(selBuilding[0].floors[0].blocks);
+        const emptyFloor = {
+          "floorno": "1",
+          "description": "",
+          "color": "#f18d00",
+          "blocks": [],
+          "boundaries":[]
+        };
+        if (selBuilding[0].floors.length > 0) {
+          setActiveFloor(selBuilding[0].floors[0]);
+          setActiveFloorBoundary(selBuilding[0].floors[0].boundaries);
+          setActiveFloorPolygons(selBuilding[0].floors[0].blocks);
+  
+        } else {
+          
+            setActiveFloor(emptyFloor);
+            setActiveFloorBoundary(emptyFloor.boundaries);
+            setActiveFloorPolygons(emptyFloor.blocks);
+    
 
+        }
+
+
+
+       
 
         setDetails(selBuilding[0]);
         // setBoundary(selBuilding[0].boundary.geometry.coordinates[0]);

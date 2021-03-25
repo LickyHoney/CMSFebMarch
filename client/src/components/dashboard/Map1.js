@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Container, Table, Row, Col, Card, CardTitle,CardBody, Modal, ModalHeader, Button, ModalFooter, ModalBody, Label, Input, Form, FormGroup } from 'reactstrap';
+import { Container, Table, Row, Col, Card, CardTitle, CardBody, Modal, ModalHeader, Button, ModalFooter, ModalBody, Label, Input, Form, FormGroup } from 'reactstrap';
 
 
 import DisplayEntries from "./DisplayEntries"
@@ -8,7 +8,7 @@ import service from "./services.js";
 // import { CardBody, Card } from 'reactstrap';
 import L from 'leaflet';
 import { EditControl } from "react-leaflet-draw";
-import { Polygon, Popup, Rectangle, Marker, TileLayer,FeatureGroup } from "react-leaflet";
+import { Polygon, Popup, Rectangle, Marker, TileLayer, FeatureGroup } from "react-leaflet";
 import { Link } from "react-router-dom";
 // import { Table, Container, Col, Row, PopUp, Button } from "reactstrap";
 import { Map } from "react-leaflet";
@@ -38,6 +38,8 @@ const Map1 = () => {
   const [newLat, setNewLat] = useState('')
   const [newLng, setNewLng] = useState('')
   const [newName, setNewName] = useState('')
+  const [delBuildingId, setDelBuildingId] = useState('')
+
   const [mapLayers, setMapLayers] = useState([]);
   const myIcon = L.icon({
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/images/marker-icon.png',
@@ -49,6 +51,8 @@ const Map1 = () => {
     shadowAnchor: null
   });
   // delete start
+  const [modalDelete, setModalDelete] = useState(false);
+
   const [modal, setModal] = useState(false);
   const [modal1, setModal1] = useState(false);
   const [defaultBoard] = useState(
@@ -122,16 +126,48 @@ const Map1 = () => {
 
 
   const toggleModal = () => setModal(!modal);
+  const toggleModalDelete = () => setModalDelete(!modalDelete);
+
   const toggleModal1 = () => setModal1(!modal1);
 
   const newNameChange = (e) => {
+    if (e.target.value.length < 20) {
       setNewName(e.target.value);
+    }
   };
   const saveBoard = (item) => {
-    
-      const newBName = newName;
-      debugger;
-      const emptyBuilding = {};
+    // window.location.reload();
+    const newBName = newName;
+    const newBLat = newLat;
+    const newBLng = newLng;
+    debugger;
+    if (newName === "") {
+      // toggleModal();
+    } else {
+      const id = "B-" + new Date().getTime().toString();
+      const emptyBuilding = {
+        "link": "/ViewBuilding/" + id,
+        "id": id,
+        "name": newBName,
+        "description": newBName,
+        "street": "",
+        "Apartment": "",
+        "doornum": "",
+        "pincode": "",
+        "region": "",
+        "country": "",
+        "latitude": newBLat,
+        "longitude": newBLng,
+        "floors": []
+      };
+      setNewName("");
+      setNewLat(0.0);
+      setNewLng(0.0);
+      // const markersLocal = markers;
+      // markers.push(emptyBuilding);
+      service.update(emptyBuilding);
+      window.location.reload();
+    }
   };
   const saveTask = (item) => {
     // let index = boards.list.findIndex(task => task.id === item.id)
@@ -142,6 +178,25 @@ const Map1 = () => {
     // }
 
   };
+  const deleteBuilding = (e) => {
+
+    const id = e.target.getAttribute('value');
+    if (id !== null && id !== undefined && id !== "") {
+      setDelBuildingId(id);
+      toggleModalDelete();
+    }
+
+
+  }
+
+  const deleteBuildingConfirm = (e) => {
+
+    const bid = delBuildingId;
+    service.deletion(bid);
+    window.location.reload();
+
+
+  }
   // delete end
 
   useEffect(() => {
@@ -157,9 +212,9 @@ const Map1 = () => {
 
 
 
-  const changeHandler = (event) => setNewLat(event.target.value)
-  const changeHandler1 = (event) => setNewLng(event.target.value)
-  const changeHandler2 = (event) => setNewName(event.target.value)
+  // const changeHandler = (event) => setNewLat(event.target.value)
+  // const changeHandler1 = (event) => setNewLng(event.target.value)
+  // const changeHandler2 = (event) => setNewName(event.target.value)
   //const changeHandlerFilter = (event) => setNewFilter(event.target.value)
 
 
@@ -179,10 +234,22 @@ const Map1 = () => {
 
   useEffect(() => {
     const results = markers.filter(marker =>
-      marker.description.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+      ( marker.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()  )
+      
+      
+      )
     );
     setMarkers(results);
-
+      if(searchTerm === "")
+      {
+        service
+        .getAll()
+        .then(allEntries => {
+          console.log("returning", allEntries)
+  
+          setMarkers(allEntries)
+        })
+      }
 
     console.log(results)
   }, [searchTerm]);
@@ -273,18 +340,18 @@ const Map1 = () => {
   });
 
   const _onCreate = (e) => {
-    console.log(e);
-    toggleModal();
-
-    const { layerType, layer } = e;
-    if (layerType === "polygon") {
-      const { _leaflet_id } = layer;
-
-      setMapLayers((layers) => [
-        ...layers,
-        { id: _leaflet_id, latlngs: layer.getLatLngs()[0] },
-      ]);
+    let latlng = {}
+    if (e.layer !== undefined && e.layer !== null) {
+      latlng = e.layer.getLatLng();
+      setNewLat(latlng.lat);
+      setNewLng(latlng.lng);
     }
+    if (isOpen === false) {
+
+      toggleModal();
+    }
+
+
   };
 
   const _onEdited = (e) => {
@@ -304,43 +371,101 @@ const Map1 = () => {
     });
   };
 
+const onChangeSearch= (e)=>{
+  
+    const val = e.target.value;
 
+    setSearchTerm(val);
+
+}
 
   return (
 
 
 
-    <div id="container" style={{ "margin": "1rem" }}>
-      <Container fluid={true}>
-        <div className="row">
-          <div className="col-12">
-            <div className="iq-card ">
-              <div className="row d-flex align-items-center mb-2">
-                <div className="col-md-9"><div className="d-flex align-items-center">
-                  <h4 className="mb-0 p-3 ml-2">Buildings</h4>
-
-                </div>
-                </div>
-                {/* <div className="text-right col-md-3" visible ={false}>
-                  <Button color="primary" onClick={toggleModal}   >
-
-                    <i className="ri-add-line font-size-24"></i> New Building
-                                        </Button>
-                </div> */}
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+    <div id="container" >
+       <Card className="iq-card mb-4" >
+        <Input type="text" name="title" id="exampleEmail" 
+        placeholder="Search building by name"
+        className="form-control mb-8 font-weight-bold " value={searchTerm} onChange={onChangeSearch}    style={{margin:"1rem"}}
+         />
+      </Card>
+  
       {/* edit start */}
+      <Row>
+        <Col sm="12">
+          <Card className="iq-card">
+            {/* <div className="iq-card-header d-flex justify-content-between">
+              <CardTitle className="iq-header-title">
+                Map
+               
+              </CardTitle>
+            </div> */}
+            <CardBody className="iq-card-body">
+              <p></p>
+              <Map ref={mapRef}
+                style={{ height: "500px", width: "100%" }}
+
+                center={[60.21679719545689, 24.810291821854594]} zoom={16} maxZoom={100}
+
+              >
+
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                />
+
+                {
+                  markers.map((item, index) => (
+
+                    <Marker key={item.id}
+                      position={[item.latitude, item.longitude]}
+                      onMouseOver={(e) => {
+                        e.target.openPopup();
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.closePopup();
+                      }}
+                    >
+
+
+
+
+                    </Marker>
+                  ))
+                }
+
+
+                <FeatureGroup>
+                  <EditControl
+                    position="topright"
+                    onCreated={_onCreate}
+                    onEdited={_onEdited}
+                    // onDeleted={_onDeleted}
+                    draw={{
+                      rectangle: false,
+                      polyline: false,
+                      circle: false,
+                      circlemarker: false,
+                      polygon: false,
+                    }}
+                  />
+                </FeatureGroup>
+
+
+              </Map>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
 
 
       <Container fluid={true}>
         <Row>
           <Col md={12}>
             <Row>
-              <div className="col-12 text-right mb-4">
-              {/* onSubmit={saveBoard(defaultBoard)} */}
+              <div className="col-12 text-right">
+                {/* onSubmit={saveBoard(defaultBoard)} */}
                 <Form >
                   <Modal isOpen={modal} fade={false} toggle={toggleModal}>
                     <ModalHeader toggle={toggleModal} className={"border-0"}>
@@ -349,14 +474,14 @@ const Map1 = () => {
                                                     </h5>
                     </ModalHeader>
                     <ModalBody>
-                      <Label>Please give building name..</Label>
+                      <Label>Please provide a name..</Label>
                       <Input type="text" name="title" value={newName} onChange={newNameChange} />
                     </ModalBody>
                     <ModalFooter>
-                      <Button color="secondary" onClick={toggleModal}>
+                      {/* <Button color="secondary" onClick={toggleModal}>
                         Cancel
-                                                </Button>
-                      <Button color="primary" onClick={saveBoard}>
+                                                </Button> */}
+                      <Button color="primary" onClick={saveBoard} active="false">
                         Save
                                                 </Button>
                     </ModalFooter>
@@ -365,6 +490,36 @@ const Map1 = () => {
               </div>
 
             </Row>
+
+            <Row>
+              <div className="col-12 text-right ">
+                {/* onSubmit={saveBoard(defaultBoard)} */}
+                <Form >
+                  <Modal isOpen={modalDelete} fade={false} toggle={toggleModalDelete}>
+                    <ModalHeader toggle={toggleModalDelete} className={"border-0"}>
+                      <h5 className={"text-primary card-title"}>
+                        Confirm Delete
+                                                    </h5>
+                    </ModalHeader>
+                    <ModalBody>
+                      <Label>Are you sure you want to dete Building?</Label>
+                      {/* <Input type="text" name="title" value={newName} onChange={newNameChange} /> */}
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="secondary" onClick={toggleModalDelete}>
+                        Cancel
+                                                </Button>
+                      <Button color="primary" onClick={deleteBuildingConfirm}>
+                        Delete
+                                                </Button>
+                    </ModalFooter>
+                  </Modal>
+                </Form>
+              </div>
+
+            </Row>
+
+
             <Row>
               <Col md={12} className="track">
                 {
@@ -372,15 +527,15 @@ const Map1 = () => {
                     <Card className="bg-transparent shadow-none mr-3 w-25 iq-card" >
                       <div className={"iq-card-header d-flex justify-content-between bg-primary"}>
                         <div className="iq-header-title">
-                          <h3 className="text-white"><Link to={"/ViewBuilding/"+item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold ">{item.description} </Link>
+                          <h3 className="text-white"><Link to={"/ViewBuilding/" + item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold ">{item.name} </Link>
                           </h3>
                         </div>
                         <div className="iq-card-header-toolbar d-flex align-items-center">
-                          
-                          <i className="ri-delete-bin-fill mr-0 font-size-28" role="button" tabIndex="0" >
+
+                          <i className="ri-delete-bin-fill mr-0 font-size-28" role="button" tabIndex="0" onClick={deleteBuilding} value={item.id}>
 
                           </i>
-                          
+
                         </div>
                       </div>
                       <CardBody className="card-body iq-card-body pro-bg-card">
@@ -391,20 +546,21 @@ const Map1 = () => {
                             <div className="iq-card-header d-flex justify-content-between pro-task-bg-card">
                               <div className="iq-header-title">
                                 {/* <Link to={item.link} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold ">{item.description} </Link> */}
-                                <h3 className="text-blue"><Link to={"/ViewBuilding/"+item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold font-black">{item.street}   {item.Apartment} {item.doornum} {item.region} {item.country} </Link>
+                                <h3 className="text-blue"><Link to={"/ViewBuilding/" + item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold font-black">{item.street}   {item.Apartment} {item.doornum} {item.region} {item.country} </Link>
                                 </h3>
 
 
                               </div>
                               <div className="iq-card-header-toolbar d-flex align-items-center">
-                              
-                              <Link to={"/EditBuilding/"+item.id}>
-                              <a  className="badge iq-bg-primary mr-2 p-2 font-size-18">Edit</a>
-                              </Link>
+
                                 
                               </div>
                             </div>
                             <CardBody className="card-body iq-card-body pro-task-bg-card">
+                            <Link to={"/EditBuilding/" + item.id}>
+                                  <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Edit</a>
+                                </Link>
+
                               {/* <p className="font-size-12">{item.description}</p> */}
                               {/* <div className="d-flex justify-content-between">
                                 <div>
@@ -491,7 +647,7 @@ const Map1 = () => {
               <Button color="secondary" onClick={toggleModal1}>
                 Close
                                 </Button>
-              <Button color="primary">
+              <Button color="primary" >
                 Save Changes
                                 </Button>
             </ModalFooter>
@@ -582,73 +738,9 @@ const Map1 = () => {
           </div>
         </div>
       </Container> */}
+
+
       
-
-      <Row>
-                    <Col sm="12">
-                        <Card className="iq-card">
-                            <div className="iq-card-header d-flex justify-content-between">
-                                <CardTitle className="iq-header-title">
-                                    {/* <h4 className="card-title"></h4> */}
-                                </CardTitle>
-                            </div>
-                            <CardBody className="iq-card-body">
-                                <p></p>
-                                <Map ref={mapRef}
-                    style={{ height: "500px", width: "100%" }}
-
-                    center={[60.21679719545689, 24.810291821854594]} zoom={16} maxZoom={100}
-
-                  >
-
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    />
-
-                    {
-                      markers.map((item, index) => (
-
-                        <Marker  key={item.description}
-                          position={[item.latitude, item.longitude]}
-                          onMouseOver={(e) => {
-                            e.target.openPopup();
-                          }}
-                          onMouseOut={(e) => {
-                            e.target.closePopup();
-                          }}
-                        >
-
-
-
-
-                        </Marker>
-                      ))
-                    }
-
-
-<FeatureGroup>
-                <EditControl
-                  position="topright"
-                  onCreated={_onCreate}
-                  onEdited={_onEdited}
-                  // onDeleted={_onDeleted}
-                  draw={{
-                    rectangle: false,
-                    polyline: false,
-                    circle: false,
-                    circlemarker: false,
-                    polygon: false,
-                  }}
-                />
-              </FeatureGroup>
-
-
-                  </Map>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
 
 
 

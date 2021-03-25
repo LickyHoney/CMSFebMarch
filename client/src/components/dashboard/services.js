@@ -14,7 +14,7 @@ const getBuilding = bid => {
 }
 
 
-const update = newEntry =>{
+const update = (newEntry) =>{
     const request = axios.post(baseUrl, newEntry)
     return request.then(response => response.data)
 }
