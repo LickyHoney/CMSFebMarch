@@ -3,7 +3,7 @@
     {
       "link": "/FloorMap/3",
       "id": "3",
-      "name": "Sello2",
+      "name": "Sello",
       "description": "Sello Kauppakeskus",
       "street": "Leppavarankatu",
       "Apartment": "3",
@@ -470,6 +470,51 @@
           ]
         }
       ]
+    },
+    {
+      "link": "/ViewBuilding/B-1616660984167",
+      "id": "B-1616660984167",
+      "name": "omnia",
+      "description": "omnia",
+      "street": "adjutantinkatu",
+      "Apartment": "23",
+      "doornum": "",
+      "pincode": "",
+      "region": "espoo",
+      "country": "Finland",
+      "latitude": 60.22189536468655,
+      "longitude": 24.833666837322937,
+      "floors": []
+    },
+    {
+      "link": "/ViewBuilding/B-1616661012346",
+      "id": "B-1616661012346",
+      "name": "park",
+      "description": "park",
+      "street": "",
+      "Apartment": "",
+      "doornum": "",
+      "pincode": "",
+      "region": "",
+      "country": "",
+      "latitude": 60.21811862966994,
+      "longitude": 24.82546380560249,
+      "floors": []
+    },
+    {
+      "link": "/ViewBuilding/B-1616661027575",
+      "id": "B-1616661027575",
+      "name": "telia hq",
+      "description": "telia hq",
+      "street": "",
+      "Apartment": "",
+      "doornum": "",
+      "pincode": "",
+      "region": "",
+      "country": "",
+      "latitude": 60.2160209979284,
+      "longitude": 24.877988024575302,
+      "floors": []
     }
   ]
 }

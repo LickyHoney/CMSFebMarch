@@ -459,8 +459,7 @@ const EditBuilding = (props) => {
     if(property!==undefined&&property!==null&&property!==''){
           detailLcl[property]=value;
           setDetails(detailLcl);
-          // service
-          // .updateBuilding(details.id, detailLcl)
+        
 
     }
 
@@ -749,32 +748,32 @@ const EditBuilding = (props) => {
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Street</Label>
                 <Input type="text" className="form-control" 
-                  defaultValue={details.street} />
+                  defaultValue={details.street} property="street" onChange={ondetailChange} />
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Apartment</Label>
-                <Input type="text" className="form-control" 
+                <Input type="text" className="form-control" property="Apartment" onChange={ondetailChange}
                   defaultValue={details.Apartment} />
               </FormGroup>
 
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Doornum</Label>
-                <Input type="text" className="form-control" 
+                <Input type="text" className="form-control" property="doornum" onChange={ondetailChange}
                   defaultValue={details.doornum} />
               </FormGroup>
 
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Region</Label>
-                <Input type="text" className="form-control" 
+                <Input type="text" className="form-control" property="region" onChange={ondetailChange}
                   defaultValue={details.region} />
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Country</Label>
-                <Input type="text" className="form-control" 
+                <Input type="text" className="form-control" property="country" onChange={ondetailChange}
                   defaultValue={details.country} />
 
               </FormGroup>
