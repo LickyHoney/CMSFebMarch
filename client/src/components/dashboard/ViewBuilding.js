@@ -2,8 +2,8 @@ import React, { useRef, useEffect, useState, useMap } from "react";
 import service from './services';
 import { EditControl } from "react-leaflet-draw";
 import LayersControl2, { ControlledLayerItem } from "./LayerControl2";
-import "./assets/leaflet.css"
-import "./assets/leaflet.draw.css"
+// import "./assets/leaflet.css"
+// import "./assets/leaflet.draw.css"
 import {
   Map, TileLayer, FeatureGroup, useLeaflet, LayersControl, Marker, Polygon,
   Popup, LayerGroup, Circle, GeoJSON

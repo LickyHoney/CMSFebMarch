@@ -46,7 +46,7 @@
     "reactstrap": "^8.7.1",
     "slick-carousel": "^1.8.1",
     "validator": "^10.9.0",
-    "webpack": "^4.44.2"
+    "webpack": "4.44.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -2,8 +2,8 @@ import { CardBody,Card,ButtonGroup, ButtonToolbar,Form,FormGroup,Label,Input, Mo
 import React, { useRef, useEffect, useState, useMap} from "react";
 import { Col, Row } from "reactstrap";
 import { EditControl } from "react-leaflet-draw";
-import "./assets/leaflet.css"
-import "./assets/leaflet.draw.css"
+// import "./assets/leaflet.css"
+// import "./assets/leaflet.draw.css"
 import {  Map, TileLayer, FeatureGroup, Marker,Polyline, Popup, Polygon, Tooltip, Rectangle,  LayersControl, LayerGroup,useMapEvents,useLeaflet} from 'react-leaflet';
 import service from './services';
 import { makeStyles, Button } from "@material-ui/core";
