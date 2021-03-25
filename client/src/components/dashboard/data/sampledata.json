@@ -3,7 +3,7 @@
     {
       "link": "/FloorMap/3",
       "id": "3",
-      "name": "Sello",
+      "name": "Sello2",
       "description": "Sello Kauppakeskus",
       "street": "Leppavarankatu",
       "Apartment": "3",
@@ -470,21 +470,6 @@
           ]
         }
       ]
-    },
-    {
-      "link": "/ViewBuilding/B-1616651291252",
-      "id": "B-1616651291252",
-      "name": "Developer",
-      "description": "Developer",
-      "street": "",
-      "Apartment": "",
-      "doornum": "",
-      "pincode": "",
-      "region": "",
-      "country": "",
-      "latitude": 60.18318437662364,
-      "longitude": 24.812228982534016,
-      "floors": []
     }
   ]
 }

@@ -449,6 +449,23 @@ const EditBuilding = (props) => {
     }
     return retCoor;
   }
+
+
+  const ondetailChange =(e)=>{
+    debugger;
+    let detailLcl = details;
+    const value = e.target.value;
+    const property = e.target.getAttribute('property');
+    if(property!==undefined&&property!==null&&property!==''){
+          detailLcl[property]=value;
+          setDetails(detailLcl);
+          // service
+          // .updateBuilding(details.id, detailLcl)
+
+    }
+
+
+}
   const handleSaveFloor = (e) => {
     let detailsLocal = details;
     const markersLocal = markers;
@@ -663,7 +680,7 @@ const EditBuilding = (props) => {
     }
   }
 
-
+ 
   const handleAddFloor = () => {
 
     const newFloor = {
@@ -719,45 +736,45 @@ const EditBuilding = (props) => {
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Building Id</Label>
-                <Input type="text" className="form-control" id="exampleInputReadonly"
+                <Input type="text" className="form-control" 
                   defaultValue={details.id} disabled />
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Building Name</Label>
-                <Input type="text" className="form-control" id="exampleInputReadonly"
-                  defaultValue={details.name} />
+                <Input type="text" className="form-control" 
+                  defaultValue={details.name} property="name" onChange={ondetailChange}/>
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Street</Label>
-                <Input type="text" className="form-control" id="exampleInputReadonly"
+                <Input type="text" className="form-control" 
                   defaultValue={details.street} />
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Apartment</Label>
-                <Input type="text" className="form-control" id="exampleInputReadonly"
+                <Input type="text" className="form-control" 
                   defaultValue={details.Apartment} />
               </FormGroup>
 
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Doornum</Label>
-                <Input type="text" className="form-control" id="exampleInputReadonly"
+                <Input type="text" className="form-control" 
                   defaultValue={details.doornum} />
               </FormGroup>
 
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Region</Label>
-                <Input type="text" className="form-control" id="exampleInputReadonly"
+                <Input type="text" className="form-control" 
                   defaultValue={details.region} />
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Country</Label>
-                <Input type="text" className="form-control" id="exampleInputReadonly"
+                <Input type="text" className="form-control" 
                   defaultValue={details.country} />
 
               </FormGroup>
