@@ -647,11 +647,11 @@ const ViewBuilding = (props) => {
 
               <div id="home-chart-02">
                 <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
-                  <Control position="topright">
-                    {/* <button class="primary" onClick={handleDrawPolygonClick} value="BO"
+                  {/* <Control position="topright">
+                    <button class="primary" onClick={handleDrawPolygonClick} value="BO"
                     style={{ "font-size": "1.5rem", "margin-left": ".05rem" ,"margin-right": ".05rem" }}>
                     Add Floor
-                        </button> */}
+                        </button>
                     <Button className="btn btn-primary"
                       style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }} color="primary" onClick={handleSaveFloor}> SaveBuilding </Button>
 
@@ -701,7 +701,7 @@ const ViewBuilding = (props) => {
                       style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
                       EditBlock
                         </button>
-                  </Control>
+                  </Control> */}
                   <LayersControl position="topright">
                     <LayersControl.BaseLayer
                       checked={false}

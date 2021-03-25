@@ -27,10 +27,32 @@ import { divIcon } from "leaflet";
 // import '../../../node_modules/leaflet/dist/leaflet.css';
 import icon from '../../../node_modules/leaflet/dist/images/marker-icon.png';
 import iconShadow from '../../../node_modules/leaflet/dist/images/marker-shadow.png';
+import { makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles(theme => ({
+    map: ({
+        height: `calc(90vh - 90px)`,
+        width: '60%',
+        zIndex: 0
+    }),
+    buttonWrapper: {
+        zIndex: 1,
+        position: "absolute",
+        bottom: theme.spacing(2),
+        marginLeft: "30%",
+        marginBottom: "8%",
+        transform: "translateX(-50%)",
+    },
+    headerWrapper: {
+        zIndex: 1,
+        marginLeft: theme.spacing(3),
+        marginTop: theme.spacing(1),
+    }
+}));
 
 
 
-const Map1 = () => {
+const Map1 = (props) => {
 
 
   let mapRef = useRef();
@@ -52,9 +74,117 @@ const Map1 = () => {
   });
   // delete start
   const [modalDelete, setModalDelete] = useState(false);
+  const classes = useStyles(props)
+  const editRef = useRef();
+
 
   const [modal, setModal] = useState(false);
   const [modal1, setModal1] = useState(false);
+  const [drawing, setDrawing] = useState(false);
+
+    const handleBoundary = () => {
+        
+        //Edit this method to perform other actions
+
+        if (!drawing) {
+            editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
+        } else {
+          editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
+          editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
+        }
+        setDrawing(!drawing)
+    }
+
+    const handleManageBoundaries = (e) => {
+      debugger;
+     
+      console.log(markers);
+      
+      for (var i = 0; i < markers.length; i++) { 
+        
+          debugger;
+          if(markers[0].boundaries.length>0) {
+            debugger;
+           // toggleBoundaries();
+           }
+  
+       else {
+          const { layerType, layer } = e;
+      if (layerType === "polygon") {
+        const { _leaflet_id } = layer;
+        setMapLayers((layers) => [
+          ...layers,
+      { id: _leaflet_id, latlngs: layer.getLatLngs()[0] },
+  
+        // [ id: _leaflet_id, latlng:layer.getLatLngs()[0] ]  ,
+        ]);
+      }
+      debugger;
+  
+  
+      if (!drawing) {
+        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
+    } else {
+        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
+        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
+       
+    }
+  
+    setDrawing(!drawing)
+  
+        
+        }
+  }
+      
+    
+      
+  debugger;
+    }
+    const onShapeDrawn = (e) => {
+      setDrawing(false)
+      const { layerType, layer } = e;
+  if (layerType === "polygon") {
+    const { _leaflet_id } = layer;
+  }
+        for (var j = 0; j < markers.length; j++) { 
+         
+           
+              debugger;
+                   
+                   markers.boundaries=[];
+                   debugger;
+                   for (var k=0; k < layer._latlngs[0].length; k++ )
+                   
+                   {
+    
+                     
+                     var point = [layer._latlngs[0][k].lat, layer._latlngs[0][k].lng];
+                    markers.boundaries.push(point);
+                    
+                    //markers[0].floors[j].boundaryCenter.push(boundCenter);
+                   }
+                   //markers[0].floors[j].boundaries= layer._latlngs
+                   //markers[0].floors[j].boundaryLeaflet_id = layer._leaflet_id;
+                   //markers[0].floors[j].boundaryCenter = [layer._bounds.getCenter()];
+                 //}
+            }
+
+
+      e.layer.on('click', () => {
+        editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+      })
+      e.layer.on('contextmenu', () => {
+          //do some contextmenu action here
+      })
+      e.layer.bindTooltip("Text", 
+          {
+            className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
+            sticky: true,
+            direction: 'right'
+          }
+      );
+  }
+
   const [defaultBoard] = useState(
     {
       id: 0,
@@ -201,12 +331,15 @@ const Map1 = () => {
 
   useEffect(() => {
 
+
     service
       .getAll()
       .then(allEntries => {
         console.log("returning", allEntries)
 
         setMarkers(allEntries)
+        debugger;
+
       })
   }, [])
 
@@ -436,10 +569,11 @@ const onChangeSearch= (e)=>{
                 }
 
 
-                <FeatureGroup>
+                {/* <FeatureGroup>
                   <EditControl
+                  ref = {editRef}
                     position="topright"
-                    onCreated={_onCreate}
+                    onCreated={onShapeDrawn}
                     onEdited={_onEdited}
                     // onDeleted={_onDeleted}
                     draw={{
@@ -450,6 +584,27 @@ const onChangeSearch= (e)=>{
                       polygon: false,
                     }}
                   />
+                </FeatureGroup> */}
+                  <FeatureGroup >
+                    <EditControl
+                    ref={editRef}
+                    position='topright'
+                    onCreated={onShapeDrawn}
+                    //here you can specify your shape options and which handler you want to enable
+                    draw={{
+                        rectangle: false,
+                        circle: false,
+                        polyline: false,
+                        circlemarker: false,
+                        marker: false,
+                        polygon: {
+                            allowIntersection: false,
+                            shapeOptions: {
+                                color: "#ff0000"
+                            },
+                        }
+                    }}
+                    />
                 </FeatureGroup>
 
 
@@ -561,9 +716,15 @@ const onChangeSearch= (e)=>{
                                   <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Edit</a>
                                 </Link>
 
-                                <Link to={"/EditBuilding/" + item.id}>
+                                {/* <Link to={"/EditBuilding/" + item.id}>
                                   <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Manage Boundary</a>
-                                </Link>
+                                </Link> */}
+                                <Button 
+                    className="badge iq-bg-primary mr-2 p-2 font-size-18"
+                    onClick={handleManageBoundaries}>
+                    
+                   Manage Boundary
+                </Button>
 
                               {/* <p className="font-size-12">{item.description}</p> */}
                               {/* <div className="d-flex justify-content-between">
