@@ -134,7 +134,7 @@ const EditBuilding = (props) => {
     }
     function onPolygonDeleted(e) {
       console.log(e);
-      debugger;
+      
       const {
         layers: { _layers },
       } = e;
@@ -150,7 +150,7 @@ const EditBuilding = (props) => {
       if (addFloorCounter === activeFloor.blocks.length) {
         let latlngs = e.layer.getLatLngs();
         latlngs = latlngs.length > 0 ? latlngs[0] : latlngs;
-        debugger;
+        
         crupdateLayer2ActiveFloor(latlngs, null, null)
 
         addFloorCounter = 0;
@@ -429,7 +429,7 @@ const EditBuilding = (props) => {
         setDetails(detailsLocal);
       }
     }
-    debugger;
+    
   }
   function reverseCoordinate(coor) {
     let retCoor = [];
@@ -454,7 +454,7 @@ const EditBuilding = (props) => {
     const markersLocal = markers;
     details.floors = markersLocal
 
-    debugger;
+    
     service
       .updateBuilding(details.id, details)
 
@@ -485,7 +485,7 @@ const EditBuilding = (props) => {
     let selectedFloorPolygonLayers = [];
     let activeFloorSel = markers[index];
     const floorColor = '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
-    debugger;
+    
     for (let blockIdx = 0; blockIdx < activeFloorSel.blocks.length; blockIdx++) {
       const blockPolygon = activeFloorSel.blocks[blockIdx];
       const geoJsonObj = block2Layer(blockPolygon, index, floorColor);
@@ -553,6 +553,8 @@ const EditBuilding = (props) => {
 
 
         setDetails(selBuilding[0]);
+
+        mapRef.current.leafletElement.flyTo([selBuilding[0].latitude, selBuilding[0].longitude], 16)
 
         // setBoundary(selBuilding[0].boundary.geometry.coordinates[0]);
 
@@ -699,9 +701,9 @@ const EditBuilding = (props) => {
     <div>
       <div class="row">
         <Breadcrumb class="mb-4">
-          <BreadcrumbItem><a href="!#"><i
+          <BreadcrumbItem><a href="/map1"><i
             className="ri-home-4-line mr-1 float-left" />Home</a></BreadcrumbItem>
-          <BreadcrumbItem active>Library</BreadcrumbItem>
+          <BreadcrumbItem active>{details.name}</BreadcrumbItem>
         </Breadcrumb>
 
       </div>
@@ -817,11 +819,11 @@ const EditBuilding = (props) => {
                     Manage Boundary
                         </button> */}
 
-                    {/* <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BL"
+                   <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BL"
                     style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
                     AddBlock
                         </button>
-
+                {/* 
                   <button class="btn btn-primary" onClick={handleEditPolygonClick}
                     style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
                     EditBlock
@@ -906,7 +908,7 @@ const EditBuilding = (props) => {
 
 
 
-                          <div>
+                          <div key={mLr.id}>
 
                             <button class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
                               {mLr.floorno}

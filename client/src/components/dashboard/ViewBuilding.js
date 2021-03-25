@@ -12,7 +12,7 @@ import Control from 'react-leaflet-control';
 
 import L from "leaflet";
 
-import { CardBody, Card, ButtonGroup, ButtonToolbar, Form, FormGroup, Label, Input, ModalHeader, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { CardBody, Card,Breadcrumb, BreadcrumbItem, ButtonGroup, ButtonToolbar, Form, FormGroup, Label, Input, ModalHeader, Modal, ModalBody, ModalFooter } from 'reactstrap';
 // Material components
 import { makeStyles, Button } from "@material-ui/core";
 import { set } from "mongoose";
@@ -419,26 +419,23 @@ const ViewBuilding = (props) => {
           "description": "",
           "color": "#f18d00",
           "blocks": [],
-          "boundaries":[]
+          "boundaries": []
         };
         if (selBuilding[0].floors.length > 0) {
           setActiveFloor(selBuilding[0].floors[0]);
           setActiveFloorBoundary(selBuilding[0].floors[0].boundaries);
           setActiveFloorPolygons(selBuilding[0].floors[0].blocks);
-  
+
         } else {
-          
-            setActiveFloor(emptyFloor);
-            setActiveFloorBoundary(emptyFloor.boundaries);
-            setActiveFloorPolygons(emptyFloor.blocks);
-    
+
+          setActiveFloor(emptyFloor);
+          setActiveFloorBoundary(emptyFloor.boundaries);
+          setActiveFloorPolygons(emptyFloor.blocks);
+
 
         }
 
-
-
-       
-
+        mapRef.current.leafletElement.flyTo([selBuilding[0].latitude, selBuilding[0].longitude], 16)
         setDetails(selBuilding[0]);
         // setBoundary(selBuilding[0].boundary.geometry.coordinates[0]);
 
@@ -579,150 +576,160 @@ const ViewBuilding = (props) => {
   return (
 
     <div>
+     
+        <div class="row">
+          <Breadcrumb class="mb-4">
+            <BreadcrumbItem><a href="/map1"><i
+              className="ri-home-4-line mr-1 float-left" />Home</a></BreadcrumbItem>
+            <BreadcrumbItem active>{details.name}</BreadcrumbItem>
+          </Breadcrumb>
 
-      <div className="row" style={{ margin: ".6%" }}>
-
-        <div className="col-lg-4">
-          <div className="iq-card iq-card-block iq-card-stretch iq-card-height bg-transparent">
-
-            <FormGroup className="form-group">
-              <Label htmlFor="exampleInputReadonly">Building Id</Label>
-              <Input type="text" className="form-control" id="exampleInputReadonly"
-                readOnly="" defaultValue={details.id} disabled />
-            </FormGroup>
-
-            <FormGroup className="form-group">
-              <Label htmlFor="exampleInputReadonly">Building Name</Label>
-              <Input type="text" className="form-control" id="exampleInputReadonly"
-                readOnly="" defaultValue={details.description} />
-            </FormGroup>
-
-            <FormGroup className="form-group">
-              <Label htmlFor="exampleInputReadonly">Street</Label>
-              <Input type="text" className="form-control" id="exampleInputReadonly"
-                readOnly="" defaultValue={details.street} />
-            </FormGroup>
-
-            <FormGroup className="form-group">
-              <Label htmlFor="exampleInputReadonly">Apartment</Label>
-              <Input type="text" className="form-control" id="exampleInputReadonly"
-                readOnly="" defaultValue={details.Apartment} />
-            </FormGroup>
-
-
-            <FormGroup className="form-group">
-              <Label htmlFor="exampleInputReadonly">Doornum</Label>
-              <Input type="text" className="form-control" id="exampleInputReadonly"
-                readOnly="" defaultValue={details.doornum} />
-            </FormGroup>
-
-
-            <FormGroup className="form-group">
-              <Label htmlFor="exampleInputReadonly">Region</Label>
-              <Input type="text" className="form-control" id="exampleInputReadonly"
-                readOnly="" defaultValue={details.region} />
-            </FormGroup>
-
-            <FormGroup className="form-group">
-              <Label htmlFor="exampleInputReadonly">Country</Label>
-              <Input type="text" className="form-control" id="exampleInputReadonly"
-                readOnly="" defaultValue={details.country} />
-
-            </FormGroup>
-
-          </div>
         </div>
 
+        <div></div>
+        <div className="row" style={{ margin: ".6%" }}>
 
-        <div className="col-lg-8">
-          <div className="iq-card overflow-hidden">
-            <h1 className="display-4">{activeFloor.description}</h1>
+          <div className="col-lg-4">
+            <div className="iq-card iq-card-block iq-card-stretch iq-card-height bg-transparent">
 
-            <div id="home-chart-02">
-              <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
-                <Control position="topright">
-                  {/* <button class="primary" onClick={handleDrawPolygonClick} value="BO"
+              <FormGroup className="form-group">
+                <Label htmlFor="exampleInputReadonly">Building Id</Label>
+                <Input type="text" className="form-control" id="exampleInputReadonly"
+                  readOnly="" defaultValue={details.id} disabled />
+              </FormGroup>
+
+              <FormGroup className="form-group">
+                <Label htmlFor="exampleInputReadonly">Building Name</Label>
+                <Input type="text" className="form-control" id="exampleInputReadonly"
+                  readOnly="" defaultValue={details.description} />
+              </FormGroup>
+
+              <FormGroup className="form-group">
+                <Label htmlFor="exampleInputReadonly">Street</Label>
+                <Input type="text" className="form-control" id="exampleInputReadonly"
+                  readOnly="" defaultValue={details.street} />
+              </FormGroup>
+
+              <FormGroup className="form-group">
+                <Label htmlFor="exampleInputReadonly">Apartment</Label>
+                <Input type="text" className="form-control" id="exampleInputReadonly"
+                  readOnly="" defaultValue={details.Apartment} />
+              </FormGroup>
+
+
+              <FormGroup className="form-group">
+                <Label htmlFor="exampleInputReadonly">Doornum</Label>
+                <Input type="text" className="form-control" id="exampleInputReadonly"
+                  readOnly="" defaultValue={details.doornum} />
+              </FormGroup>
+
+
+              <FormGroup className="form-group">
+                <Label htmlFor="exampleInputReadonly">Region</Label>
+                <Input type="text" className="form-control" id="exampleInputReadonly"
+                  readOnly="" defaultValue={details.region} />
+              </FormGroup>
+
+              <FormGroup className="form-group">
+                <Label htmlFor="exampleInputReadonly">Country</Label>
+                <Input type="text" className="form-control" id="exampleInputReadonly"
+                  readOnly="" defaultValue={details.country} />
+
+              </FormGroup>
+
+            </div>
+          </div>
+
+
+          <div className="col-lg-8">
+            <div className="iq-card overflow-hidden">
+              <h1 className="display-4">{activeFloor.description}</h1>
+
+              <div id="home-chart-02">
+                <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
+                  <Control position="topright">
+                    {/* <button class="primary" onClick={handleDrawPolygonClick} value="BO"
                     style={{ "font-size": "1.5rem", "margin-left": ".05rem" ,"margin-right": ".05rem" }}>
                     Add Floor
                         </button> */}
-                  <Button className="btn btn-primary"
-                    style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }} color="primary" onClick={handleSaveFloor}> SaveBuilding </Button>
+                    <Button className="btn btn-primary"
+                      style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }} color="primary" onClick={handleSaveFloor}> SaveBuilding </Button>
 
 
-                  <Button className="btn btn-primary" style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }} color="primary" onClick={() => toggle("addFloor")}> AddFloor </Button>{' '}
+                    <Button className="btn btn-primary" style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }} color="primary" onClick={() => toggle("addFloor")}> AddFloor </Button>{' '}
 
 
-                  <Modal isOpen={addFloor} toggle={() => toggle("addFloor")} className="modal-sm">
-                    <ModalHeader className="btn btn-primary" toggle={() => toggle("addFloor")}>Add Floor</ModalHeader>
-                    <ModalBody>
+                    <Modal isOpen={addFloor} toggle={() => toggle("addFloor")} className="modal-sm">
+                      <ModalHeader className="btn btn-primary" toggle={() => toggle("addFloor")}>Add Floor</ModalHeader>
+                      <ModalBody>
 
 
-                      <p>Floor: {markers.length + 1}</p>
+                        <p>Floor: {markers.length + 1}</p>
 
-                      <p>Enter Floor Description</p>
-                      <input type="text" onChange={changeHandlerDesc} value={newDesc}
-                        lur={updateIsEdit} />
+                        <p>Enter Floor Description</p>
+                        <input type="text" onChange={changeHandlerDesc} value={newDesc}
+                          lur={updateIsEdit} />
 
-                    </ModalBody>
-                    <ModalFooter>
+                      </ModalBody>
+                      <ModalFooter>
 
-                      <Button color="primary" onClick={() => {
-                        toggle("addFloor");
-                        // handleAddFloor(); 
-                        handleAddFloor();
+                        <Button color="primary" onClick={() => {
+                          toggle("addFloor");
+                          // handleAddFloor(); 
+                          handleAddFloor();
 
-                      }}>OK</Button>{' '}
-                      <Button color="secondary" onClick={() => toggle("addFloor")}>Cancel</Button>
-                    </ModalFooter>
-                  </Modal>
+                        }}>OK</Button>{' '}
+                        <Button color="secondary" onClick={() => toggle("addFloor")}>Cancel</Button>
+                      </ModalFooter>
+                    </Modal>
 
-                  <button class="btn btn-primary" onClick={deleteActiveFloor} value="BO"
-                    style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }}>
-                    Delete Floor
+                    <button class="btn btn-primary" onClick={deleteActiveFloor} value="BO"
+                      style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }}>
+                      Delete Floor
                         </button>
-                  <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BO"
-                    style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }}>
-                    Manage Boundary
-                        </button>
-
-                  <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BL"
-                    style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
-                    AddBlock
+                    <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BO"
+                      style={{ "font-size": "1.0rem", "margin-left": ".05rem", "margin-right": ".05rem" }}>
+                      Manage Boundary
                         </button>
 
-                  <button class="btn btn-primary" onClick={handleEditPolygonClick}
-                    style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
-                    EditBlock
+                    <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BL"
+                      style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
+                      AddBlock
                         </button>
-                </Control>
-                <LayersControl position="topright">
-                  <LayersControl.BaseLayer
-                    checked={false}
-                    name="Esri WorldImagery"
-                    group="BaseLayers"
-                  >
-                    <TileLayer
-                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png"
-                      attribution='&copy; <a href="Esri &mdash">Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community</a> contributors'
-                    />
-                  </LayersControl.BaseLayer >
-                  <LayersControl.BaseLayer
-                    checked={true}
-                    name="OpenStreetMap"
-                    group="BaseLayers"
-                  >
-                    <TileLayer
-                      attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                  </LayersControl.BaseLayer >
 
-                </LayersControl>
+                    <button class="btn btn-primary" onClick={handleEditPolygonClick}
+                      style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
+                      EditBlock
+                        </button>
+                  </Control>
+                  <LayersControl position="topright">
+                    <LayersControl.BaseLayer
+                      checked={false}
+                      name="Esri WorldImagery"
+                      group="BaseLayers"
+                    >
+                      <TileLayer
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png"
+                        attribution='&copy; <a href="Esri &mdash">Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community</a> contributors'
+                      />
+                    </LayersControl.BaseLayer >
+                    <LayersControl.BaseLayer
+                      checked={true}
+                      name="OpenStreetMap"
+                      group="BaseLayers"
+                    >
+                      <TileLayer
+                        attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                    </LayersControl.BaseLayer >
 
-                <EditableGroup data={selectedFloorGeoData} />
+                  </LayersControl>
+
+                  <EditableGroup data={selectedFloorGeoData} />
 
 
-                {/* <FeatureGroup>
+                  {/* <FeatureGroup>
                   
                   {activeFloorPolygons.map((polygonObjLayer,polyIdx)=>(
                       <div>
@@ -765,42 +772,42 @@ const ViewBuilding = (props) => {
 
 
 
-                <Control position="topright" >
-                  <div>
-                    {
-                      markers.map((mLr, didx) => (
+                  <Control position="topright" >
+                    <div>
+                      {
+                        markers.map((mLr, didx) => (
 
 
 
-                        <div>
+                          <div>
 
-                          <button class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
-                            {mLr.floorno}
-                          </button>
-
-
-                        </div>
-                      ))
-
-                    }
-
-                  </div>
-                </Control>
+                            <button class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
+                              {mLr.floorno}
+                            </button>
 
 
+                          </div>
+                        ))
+
+                      }
+
+                    </div>
+                  </Control>
 
 
 
-              </Map>
+
+
+                </Map>
+              </div>
             </div>
           </div>
         </div>
+
+
+
+
       </div>
-
-
-
-
-    </div>
   )
 }
 

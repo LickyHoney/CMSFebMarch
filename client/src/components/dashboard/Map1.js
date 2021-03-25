@@ -561,6 +561,10 @@ const onChangeSearch= (e)=>{
                                   <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Edit</a>
                                 </Link>
 
+                                <Link to={"/EditBuilding/" + item.id}>
+                                  <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Manage Boundary</a>
+                                </Link>
+
                               {/* <p className="font-size-12">{item.description}</p> */}
                               {/* <div className="d-flex justify-content-between">
                                 <div>
