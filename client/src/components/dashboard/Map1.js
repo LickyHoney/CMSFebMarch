@@ -27,27 +27,27 @@ import { divIcon } from "leaflet";
 // import '../../../node_modules/leaflet/dist/leaflet.css';
 import icon from '../../../node_modules/leaflet/dist/images/marker-icon.png';
 import iconShadow from '../../../node_modules/leaflet/dist/images/marker-shadow.png';
-import { makeStyles} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
-    map: ({
-        height: `calc(90vh - 90px)`,
-        width: '60%',
-        zIndex: 0
-    }),
-    buttonWrapper: {
-        zIndex: 1,
-        position: "absolute",
-        bottom: theme.spacing(2),
-        marginLeft: "30%",
-        marginBottom: "8%",
-        transform: "translateX(-50%)",
-    },
-    headerWrapper: {
-        zIndex: 1,
-        marginLeft: theme.spacing(3),
-        marginTop: theme.spacing(1),
-    }
+  map: ({
+    height: `calc(90vh - 90px)`,
+    width: '60%',
+    zIndex: 0
+  }),
+  buttonWrapper: {
+    zIndex: 1,
+    position: "absolute",
+    bottom: theme.spacing(2),
+    marginLeft: "30%",
+    marginBottom: "8%",
+    transform: "translateX(-50%)",
+  },
+  headerWrapper: {
+    zIndex: 1,
+    marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(1),
+  }
 }));
 
 
@@ -61,6 +61,11 @@ const Map1 = (props) => {
   const [newLng, setNewLng] = useState('')
   const [newName, setNewName] = useState('')
   const [delBuildingId, setDelBuildingId] = useState('')
+  const [addBBuildingId, setAddBBuildingId] = useState('')
+
+  const [displayPolygonControl, setdisplayPolygonControl] = useState(false);
+
+
 
   const [mapLayers, setMapLayers] = useState([]);
   const myIcon = L.icon({
@@ -76,113 +81,86 @@ const Map1 = (props) => {
   const [modalDelete, setModalDelete] = useState(false);
   const classes = useStyles(props)
   const editRef = useRef();
+  const editRefPoly = useRef();
 
-
+  const [modalBoundaryError, setmodalBoundaryError] = useState(false);
   const [modal, setModal] = useState(false);
   const [modal1, setModal1] = useState(false);
   const [drawing, setDrawing] = useState(false);
 
-    const handleBoundary = () => {
-        
-        //Edit this method to perform other actions
+  const handleBoundary = () => {
 
-        if (!drawing) {
-            editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
-        } else {
-          editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
-          editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
-        }
-        setDrawing(!drawing)
+    //Edit this method to perform other actions
+
+    if (!drawing) {
+      editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
+    } else {
+      editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
+      editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
     }
+    setDrawing(!drawing)
+  }
 
-    const handleManageBoundaries = (e) => {
+  const handleManageBoundaries = (e) => {
+
+    const bId = e.target.getAttribute('value');
+
+    debugger;
+    editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable();
+    setAddBBuildingId(bId);
+
+  }
+
+
+
+  const onShapeDrawn = (e) => {
+    let boundaries = [];
+    const bId = addBBuildingId;
+    const { layerType, layer } = e;
+    let markersLcl = markers;
+
+    if (bId === "") {
+      editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable();
       debugger;
-     
-      console.log(markers);
-      
-      for (var i = 0; i < markers.length; i++) { 
-        
-          debugger;
-          if(markers[0].boundaries.length>0) {
-            debugger;
-           // toggleBoundaries();
-           }
-  
-       else {
-          const { layerType, layer } = e;
+      editRef.current.leafletElement._toolbars.edit.options.featureGroup.removeLayer(layer);
+      toggleModalBoundaryError();
+
+    } else {
       if (layerType === "polygon") {
         const { _leaflet_id } = layer;
-        setMapLayers((layers) => [
-          ...layers,
-      { id: _leaflet_id, latlngs: layer.getLatLngs()[0] },
-  
-        // [ id: _leaflet_id, latlng:layer.getLatLngs()[0] ]  ,
-        ]);
-      }
-      debugger;
-  
-  
-      if (!drawing) {
-        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
-    } else {
-        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
-        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
-       
-    }
-  
-    setDrawing(!drawing)
-  
-        
-        }
-  }
-      
-    
-      
-  debugger;
-    }
-    const onShapeDrawn = (e) => {
-      setDrawing(false)
-      const { layerType, layer } = e;
-  if (layerType === "polygon") {
-    const { _leaflet_id } = layer;
-  }
-        for (var j = 0; j < markers.length; j++) { 
-         
-           
-              debugger;
-                   
-                   markers.boundaries=[];
-                   debugger;
-                   for (var k=0; k < layer._latlngs[0].length; k++ )
-                   
-                   {
-    
-                     
-                     var point = [layer._latlngs[0][k].lat, layer._latlngs[0][k].lng];
-                    markers.boundaries.push(point);
-                    
-                    //markers[0].floors[j].boundaryCenter.push(boundCenter);
-                   }
-                   //markers[0].floors[j].boundaries= layer._latlngs
-                   //markers[0].floors[j].boundaryLeaflet_id = layer._leaflet_id;
-                   //markers[0].floors[j].boundaryCenter = [layer._bounds.getCenter()];
-                 //}
+        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable();
+        for (var j = 0; j < markersLcl.length; j++) {
+          if (bId === markersLcl[j].id) {
+            for (var k = 0; k < layer._latlngs[0].length; k++) {
+              var point = [layer._latlngs[0][k].lat, layer._latlngs[0][k].lng];
+              boundaries.push(point);
             }
-
-
-      e.layer.on('click', () => {
-        editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
-      })
-      e.layer.on('contextmenu', () => {
-          //do some contextmenu action here
-      })
-      e.layer.bindTooltip("Text", 
-          {
-            className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
-            sticky: true,
-            direction: 'right'
+            markersLcl[j].boundaries = boundaries;
+            setMarkers(markersLcl);
+            service.updateBuilding(markersLcl[j].id,markersLcl[j]);
           }
-      );
+
+        }
+        debugger;
+      } else if (layerType === "marker") {
+        toggleModal();
+      }
+    }
+
+
+    // e.layer.on('click', () => {
+    //   editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+    // })
+    // e.layer.on('contextmenu', () => {
+    //   //do some contextmenu action here
+    // })
+    // e.layer.bindTooltip("Text",
+    //   {
+    //     className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
+    //     sticky: true,
+    //     direction: 'right'
+    //   }
+    // );
   }
 
   const [defaultBoard] = useState(
@@ -256,6 +234,8 @@ const Map1 = (props) => {
 
 
   const toggleModal = () => setModal(!modal);
+  const toggleModalBoundaryError = () => setmodalBoundaryError(!modalBoundaryError);
+  
   const toggleModalDelete = () => setModalDelete(!modalDelete);
 
   const toggleModal1 = () => setModal1(!modal1);
@@ -288,7 +268,8 @@ const Map1 = (props) => {
         "country": "",
         "latitude": newBLat,
         "longitude": newBLng,
-        "floors": []
+        "floors": [],
+        "boundaries":[]
       };
       setNewName("");
       setNewLat(0.0);
@@ -367,22 +348,21 @@ const Map1 = (props) => {
 
   useEffect(() => {
     const results = markers.filter(marker =>
-      ( marker.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()  )
-      
-      
-      )
+    (marker.name.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+
+
+    )
     );
     setMarkers(results);
-      if(searchTerm === "")
-      {
-        service
+    if (searchTerm === "") {
+      service
         .getAll()
         .then(allEntries => {
           console.log("returning", allEntries)
-  
+
           setMarkers(allEntries)
         })
-      }
+    }
 
     console.log(results)
   }, [searchTerm]);
@@ -504,26 +484,26 @@ const Map1 = (props) => {
     });
   };
 
-const onChangeSearch= (e)=>{
-  
+  const onChangeSearch = (e) => {
+
     const val = e.target.value;
 
     setSearchTerm(val);
 
-}
+  }
 
   return (
 
 
 
     <div id="container" >
-       <Card className="iq-card mb-4" >
-        <Input type="text" name="title" id="exampleEmail" 
-        placeholder="Search building by name"
-        className="form-control mb-8 font-weight-bold " value={searchTerm} onChange={onChangeSearch}    style={{margin:"1rem"}}
-         />
+      <Card className="iq-card mb-4" >
+        <Input type="text" name="title" id="exampleEmail"
+          placeholder="Search building by name"
+          className="form-control mb-8 font-weight-bold " value={searchTerm} onChange={onChangeSearch} style={{ margin: "1rem" }}
+        />
       </Card>
-  
+
       {/* edit start */}
       <Row>
         <Col sm="12">
@@ -560,7 +540,7 @@ const onChangeSearch= (e)=>{
                         e.target.closePopup();
                       }}
                     >
-
+                      {/* <renderPopup item={item}></renderPopup> */}
 
 
 
@@ -569,9 +549,9 @@ const onChangeSearch= (e)=>{
                 }
 
 
-                {/* <FeatureGroup>
+                <FeatureGroup tyle={{ display: displayPolygonControl ? "block" : "none" }}>
                   <EditControl
-                  ref = {editRef}
+                    ref={editRef}
                     position="topright"
                     onCreated={onShapeDrawn}
                     onEdited={_onEdited}
@@ -581,32 +561,36 @@ const onChangeSearch= (e)=>{
                       polyline: false,
                       circle: false,
                       circlemarker: false,
-                      polygon: false,
+                      polygon: true,
                     }}
-                  />
-                </FeatureGroup> */}
-                  <FeatureGroup >
-                    <EditControl
-                    ref={editRef}
-                    position='topright'
-                    onCreated={onShapeDrawn}
-                    //here you can specify your shape options and which handler you want to enable
-                    draw={{
-                        rectangle: false,
-                        circle: false,
-                        polyline: false,
-                        circlemarker: false,
-                        marker: false,
-                        polygon: {
-                            allowIntersection: false,
-                            shapeOptions: {
-                                color: "#ff0000"
-                            },
-                        }
-                    }}
-                    />
-                </FeatureGroup>
+                  >
+                    
+                      
 
+                  </EditControl>
+                 
+                  {/* <EditControl
+                  ref = {editRefPoly}
+                    position="topright"
+                    onCreated={onShapeDrawn}
+                    // onEdited={_onEdited}
+                    // onDeleted={_onDeleted}
+                    showDrawControl="{displayPolygonControl}"
+                    draw={{
+                      rectangle: false,
+                      polyline: false,
+                      circle: false,
+                      circlemarker: false,
+                      marker: false,
+                    }}
+                  /> */}
+                </FeatureGroup>
+                {
+                      markers.map((markerx,iidx)=>(
+                        <Polygon positions={markerx.boundaries}></Polygon>
+                        
+                      ))
+                    }
 
               </Map>
             </CardBody>
@@ -646,88 +630,117 @@ const onChangeSearch= (e)=>{
 
             </Row>
 
-            <Row>
-              <div className="col-12 text-right ">
-                {/* onSubmit={saveBoard(defaultBoard)} */}
-                <Form >
-                  <Modal isOpen={modalDelete} fade={false} toggle={toggleModalDelete}>
-                    <ModalHeader toggle={toggleModalDelete} className={"border-0"}>
-                      <h5 className={"text-primary card-title"}>
-                        Confirm Delete
+           
+                <Row>
+                  <div className="col-12 text-right">
+                    {/* onSubmit={saveBoard(defaultBoard)} */}
+                    <Form >
+                      <Modal isOpen={modalBoundaryError} fade={false} toggle={toggleModalBoundaryError}>
+                        <ModalHeader toggle={toggleModalBoundaryError} className={"border-0"}>
+                          <h5 className={"text-primary card-title"}>
+                           Use differentOption
                                                     </h5>
-                    </ModalHeader>
-                    <ModalBody>
-                      <Label>Are you sure you want to dete Building?</Label>
-                      {/* <Input type="text" name="title" value={newName} onChange={newNameChange} /> */}
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="secondary" onClick={toggleModalDelete}>
-                        Cancel
+                        </ModalHeader>
+                        <ModalBody>
+                          <Label>Please use Manage Boundaries Option.</Label>
+                          
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color="secondary" onClick={toggleModalBoundaryError}>
+                        ok
                                                 </Button>
-                      <Button color="primary" onClick={deleteBuildingConfirm}>
-                        Delete
+                        
+                        </ModalFooter>
+                      </Modal>
+                    </Form>
+                  </div>
+
+                </Row>
+
+
+                <Row>
+                  <div className="col-12 text-right ">
+                    {/* onSubmit={saveBoard(defaultBoard)} */}
+                    <Form >
+                      <Modal isOpen={modalDelete} fade={false} toggle={toggleModalDelete}>
+                        <ModalHeader toggle={toggleModalDelete} className={"border-0"}>
+                          <h5 className={"text-primary card-title"}>
+                            Confirm Delete
+                                                    </h5>
+                        </ModalHeader>
+                        <ModalBody>
+                          <Label>Are you sure you want to dete Building?</Label>
+                          {/* <Input type="text" name="title" value={newName} onChange={newNameChange} /> */}
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color="secondary" onClick={toggleModalDelete}>
+                            Cancel
                                                 </Button>
-                    </ModalFooter>
-                  </Modal>
-                </Form>
-              </div>
+                          <Button color="primary" onClick={deleteBuildingConfirm}>
+                            Delete
+                                                </Button>
+                        </ModalFooter>
+                      </Modal>
+                    </Form>
+                  </div>
 
-            </Row>
-
-
-            <Row>
-              <Col md={12} className="track">
-                {
-                  markers.map((item, index) => (
-                    <Card className="bg-transparent shadow-none mr-3 w-25 iq-card" >
-                      <div className={"iq-card-header d-flex justify-content-between bg-primary"}>
-                        <div className="iq-header-title">
-                          <h3 className="text-white"><Link to={"/ViewBuilding/" + item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold ">{item.name} </Link>
-                          </h3>
-                        </div>
-                        <div className="iq-card-header-toolbar d-flex align-items-center">
-
-                          <i className="ri-delete-bin-fill mr-0 font-size-28" role="button" tabIndex="0" onClick={deleteBuilding} value={item.id}>
-
-                          </i>
-
-                        </div>
-                      </div>
-                      <CardBody className="card-body iq-card-body pro-bg-card">
-                        <div>
+                </Row>
 
 
-                          <Card className="iq-card">
-                            <div className="iq-card-header d-flex justify-content-between pro-task-bg-card">
-                              <div className="iq-header-title">
-                                {/* <Link to={item.link} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold ">{item.description} </Link> */}
-                                <h3 className="text-blue"><Link to={"/ViewBuilding/" + item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold font-black">{item.street}   {item.Apartment} {item.doornum} {item.region} {item.country} </Link>
-                                </h3>
-
-
-                              </div>
-                              <div className="iq-card-header-toolbar d-flex align-items-center">
-
-                                
-                              </div>
+                <Row>
+                  <Col md={12} className="track">
+                    {
+                      markers.map((item, index) => (
+                        <Card className="bg-transparent shadow-none mr-3 w-25 iq-card" >
+                          <div className={"iq-card-header d-flex justify-content-between bg-primary"}>
+                            <div className="iq-header-title">
+                              <h3 className="text-white"><Link to={"/ViewBuilding/" + item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold ">{item.name} </Link>
+                              </h3>
                             </div>
-                            <CardBody className="card-body iq-card-body pro-task-bg-card">
-                            <Link to={"/EditBuilding/" + item.id}>
-                                  <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Edit</a>
-                                </Link>
+                            <div className="iq-card-header-toolbar d-flex align-items-center">
 
-                                {/* <Link to={"/EditBuilding/" + item.id}>
-                                  <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Manage Boundary</a>
-                                </Link> */}
-                                <Button 
-                    className="badge iq-bg-primary mr-2 p-2 font-size-18"
-                    onClick={handleManageBoundaries}>
-                    
-                   Manage Boundary
-                </Button>
+                              <i className="ri-delete-bin-fill mr-0 font-size-28" role="button" tabIndex="0" onClick={deleteBuilding} value={item.id}>
 
-                              {/* <p className="font-size-12">{item.description}</p> */}
-                              {/* <div className="d-flex justify-content-between">
+                              </i>
+
+                            </div>
+                          </div>
+                          <CardBody className="card-body iq-card-body pro-bg-card">
+                            <div>
+
+
+                              <Card className="iq-card">
+                                <div className="iq-card-header d-flex justify-content-between pro-task-bg-card">
+                                  <div className="iq-header-title">
+                                    {/* <Link to={item.link} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold ">{item.description} </Link> */}
+                                    <h3 className="text-blue"><Link to={"/ViewBuilding/" + item.id} onMouseEnter={flyToMarker} value={index} className="nav-link font-weight-bold font-black">{item.street}   {item.Apartment} {item.doornum} {item.region} {item.country} </Link>
+                                    </h3>
+
+
+                                  </div>
+                                  <div className="iq-card-header-toolbar d-flex align-items-center">
+
+
+                                  </div>
+                                </div>
+                                <CardBody className="card-body iq-card-body pro-task-bg-card">
+                                  <Link to={"/EditBuilding/" + item.id}>
+                                    <a className="badge iq-bg-primary mr-2 p-2 font-size-18">Edit</a>
+                                  </Link>
+
+                                  <Link >
+                                    <a className="badge iq-bg-primary mr-2 p-2 font-size-18" type="button" value={item.id}
+                                      onClick={handleManageBoundaries}>Manage Boundary</a>
+                                  </Link>
+                                  {/* <Button
+                                    className="badge iq-bg-primary mr-2 p-2 font-size-18"
+                                    onClick={handleManageBoundaries} value={item.id}>
+
+                                    Manage Boundary
+                               </Button> */}
+
+                                  {/* <p className="font-size-12">{item.description}</p> */}
+                                  {/* <div className="d-flex justify-content-between">
                                 <div>
 
                                   <i className="ri-ball-pen-line font-size-18" role="button" tabIndex="0"></i>
@@ -743,84 +756,84 @@ const onChangeSearch= (e)=>{
                                   <i className="ri-close-circle-line font-size-18 ml-2"></i>
                                 </div>
                               </div> */}
-                              <div className="mt-2 progress" style={{ "height": "4px" }}>
-                                <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" className="progress-bar iq-border-radius-10 bg-success" style={{ "width": "40%" }}>
-                                  <span> </span>
-                                </div>
-                                <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80" className="progress-bar iq-border-radius-10 bg-warning" style={{ "width": "80%" }}>
-                                  <span> </span>
-                                </div>
-                                <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" className="progress-bar iq-border-radius-10 bg-danger" style={{ "width": "50%" }}>
-                                  <span> </span>
-                                </div>
-                              </div>
-                            </CardBody>
-                          </Card>
+                                  <div className="mt-2 progress" style={{ "height": "4px" }}>
+                                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" className="progress-bar iq-border-radius-10 bg-success" style={{ "width": "40%" }}>
+                                      <span> </span>
+                                    </div>
+                                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80" className="progress-bar iq-border-radius-10 bg-warning" style={{ "width": "80%" }}>
+                                      <span> </span>
+                                    </div>
+                                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" className="progress-bar iq-border-radius-10 bg-danger" style={{ "width": "50%" }}>
+                                      <span> </span>
+                                    </div>
+                                  </div>
+                                </CardBody>
+                              </Card>
 
 
 
-                        </div>
-                        {/* <Button color="primary" className="btn btn-lg btn-block"  onClick={toggleModal1}>
+                            </div>
+                            {/* <Button color="primary" className="btn btn-lg btn-block"  onClick={toggleModal1}>
                                                         Add Item
                                                     </Button> */}
-                      </CardBody>
+                          </CardBody>
 
-                    </Card>
-                  ))
-                }
+                        </Card>
+                      ))
+                    }
 
+                  </Col>
+                </Row>
               </Col>
             </Row>
-          </Col>
-        </Row>
-        <Form onSubmit={saveTask(defaultTask)}>
-          <Modal isOpen={modal1} fade={false} toggle={toggleModal1}>
-            <ModalHeader toggle={toggleModal1} className={"border-0"}>
-              <h5 className={"text-primary card-title"}>
-                New Task
+            <Form onSubmit={saveTask(defaultTask)}>
+              <Modal isOpen={modal1} fade={false} toggle={toggleModal1}>
+                <ModalHeader toggle={toggleModal1} className={"border-0"}>
+                  <h5 className={"text-primary card-title"}>
+                    New Task
                                     </h5>
-            </ModalHeader>
-            <ModalBody>
-              <FormGroup>
-                <Label for="exampleEmail">Name</Label>
-                <Input type="text" name="email" id="exampleEmail" placeholder="with a placeholder" />
-              </FormGroup>
-              <FormGroup>
-                <Label for="examplePassword">Description</Label>
-                <Input type="text" name="password" id="examplePassword" placeholder="password placeholder" />
-              </FormGroup>
-              <FormGroup check>
-                <Label check>
-                  <Input type="radio" name="radio1" />{' '}
+                </ModalHeader>
+                <ModalBody>
+                  <FormGroup>
+                    <Label for="exampleEmail">Name</Label>
+                    <Input type="text" name="email" id="exampleEmail" placeholder="with a placeholder" />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="examplePassword">Description</Label>
+                    <Input type="text" name="password" id="examplePassword" placeholder="password placeholder" />
+                  </FormGroup>
+                  <FormGroup check>
+                    <Label check>
+                      <Input type="radio" name="radio1" />{' '}
                                                 Go
                                         </Label>
-              </FormGroup>
-              <FormGroup check>
-                <Label check>
-                  <Input type="radio" name="radio1" />{' '}
+                  </FormGroup>
+                  <FormGroup check>
+                    <Label check>
+                      <Input type="radio" name="radio1" />{' '}
                                            High
                                         </Label>
-              </FormGroup>
-              <FormGroup check>
-                <Label check>
-                  <Input type="radio" name="radio1" />{' '}
+                  </FormGroup>
+                  <FormGroup check>
+                    <Label check>
+                      <Input type="radio" name="radio1" />{' '}
                                            Critical
                                         </Label>
-              </FormGroup>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="secondary" onClick={toggleModal1}>
-                Close
+                  </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="secondary" onClick={toggleModal1}>
+                    Close
                                 </Button>
-              <Button color="primary" >
-                Save Changes
+                  <Button color="primary" >
+                    Save Changes
                                 </Button>
-            </ModalFooter>
-          </Modal>
-        </Form>
+                </ModalFooter>
+              </Modal>
+            </Form>
       </Container>
-      {/* edit end */}
-      {/* <Container fluid={true}>
+          {/* edit end */}
+          {/* <Container fluid={true}>
         <div className="row">
           <div className="col-12">
             <div className="iq-card ">
@@ -841,7 +854,7 @@ const onChangeSearch= (e)=>{
 
 
 
-      {/* <Container fluid={true}>
+          {/* <Container fluid={true}>
         <div className="row">
           <div className="col-12">
             <div className="iq-card ">
@@ -905,7 +918,7 @@ const onChangeSearch= (e)=>{
       </Container> */}
 
 
-      
+
 
 
 

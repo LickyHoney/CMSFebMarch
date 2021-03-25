@@ -134,7 +134,7 @@ const EditBuilding = (props) => {
     }
     function onPolygonDeleted(e) {
       console.log(e);
-      
+
       const {
         layers: { _layers },
       } = e;
@@ -150,7 +150,7 @@ const EditBuilding = (props) => {
       if (addFloorCounter === activeFloor.blocks.length) {
         let latlngs = e.layer.getLatLngs();
         latlngs = latlngs.length > 0 ? latlngs[0] : latlngs;
-        
+
         crupdateLayer2ActiveFloor(latlngs, null, null)
 
         addFloorCounter = 0;
@@ -429,7 +429,7 @@ const EditBuilding = (props) => {
         setDetails(detailsLocal);
       }
     }
-    
+
   }
   function reverseCoordinate(coor) {
     let retCoor = [];
@@ -451,26 +451,26 @@ const EditBuilding = (props) => {
   }
 
 
-  const ondetailChange =(e)=>{
+  const ondetailChange = (e) => {
     debugger;
     let detailLcl = details;
     const value = e.target.value;
     const property = e.target.getAttribute('property');
-    if(property!==undefined&&property!==null&&property!==''){
-          detailLcl[property]=value;
-          setDetails(detailLcl);
-        
+    if (property !== undefined && property !== null && property !== '') {
+      detailLcl[property] = value;
+      setDetails(detailLcl);
+
 
     }
 
 
-}
+  }
   const handleSaveFloor = (e) => {
     let detailsLocal = details;
     const markersLocal = markers;
     details.floors = markersLocal
 
-    
+
     service
       .updateBuilding(details.id, details)
 
@@ -501,7 +501,7 @@ const EditBuilding = (props) => {
     let selectedFloorPolygonLayers = [];
     let activeFloorSel = markers[index];
     const floorColor = '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
-    
+
     for (let blockIdx = 0; blockIdx < activeFloorSel.blocks.length; blockIdx++) {
       const blockPolygon = activeFloorSel.blocks[blockIdx];
       const geoJsonObj = block2Layer(blockPolygon, index, floorColor);
@@ -679,7 +679,7 @@ const EditBuilding = (props) => {
     }
   }
 
- 
+
   const handleAddFloor = () => {
 
     const newFloor = {
@@ -735,19 +735,19 @@ const EditBuilding = (props) => {
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Building Id</Label>
-                <Input type="text" className="form-control" 
+                <Input type="text" className="form-control"
                   defaultValue={details.id} disabled />
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Building Name</Label>
-                <Input type="text" className="form-control" 
-                  defaultValue={details.name} property="name" onChange={ondetailChange}/>
+                <Input type="text" className="form-control"
+                  defaultValue={details.name} property="name" onChange={ondetailChange} />
               </FormGroup>
 
               <FormGroup className="form-group">
                 <Label htmlFor="exampleInputReadonly">Street</Label>
-                <Input type="text" className="form-control" 
+                <Input type="text" className="form-control"
                   defaultValue={details.street} property="street" onChange={ondetailChange} />
               </FormGroup>
 
@@ -835,11 +835,11 @@ const EditBuilding = (props) => {
                     Manage Boundary
                         </button> */}
 
-                   <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BL"
-                    style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
-                    AddBlock
+                    <button class="btn btn-primary" onClick={handleDrawPolygonClick} value="BL"
+                      style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
+                      AddBlock
                         </button>
-                {/* 
+                    {/* 
                   <button class="btn btn-primary" onClick={handleEditPolygonClick}
                     style={{ "font-size": "1.0rem", "margin-left": ".05rem" }}>
                     EditBlock
@@ -938,7 +938,9 @@ const EditBuilding = (props) => {
 
                     </div>
                   </Control>
-
+                  {if(details!==undefined&&details.boundaries.length>0)
+                    <Polygon positions={details.boundaries} ></Polygon>
+                  }
 
 
 
