@@ -16,6 +16,8 @@ import { CardBody, Card, Breadcrumb, BreadcrumbItem, ButtonGroup, ButtonToolbar,
 // Material components
 import { makeStyles, Button } from "@material-ui/core";
 import { set } from "mongoose";
+import "semantic-ui-css/semantic.min.css";
+import Tooltip from "@material-ui/core/Tooltip";
 
 let addFloorCounter = 0;
 
@@ -41,6 +43,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const modalStyles = {
+  width   :    500,
+  height  :    500
+}
+
+
 
 
 const EditBuilding = (props) => {
@@ -61,6 +69,9 @@ const EditBuilding = (props) => {
   const [isEdit, setIsEdit] = useState('');
   const [boundaryid, setBoundaryid] = useState(0);
   const [selectedFloorGeoData, setselectedFloorGeoData] = useState('');
+  const [blockDescription, setBlockDescription] = useState(false);
+
+ 
   // const [addCounter,setAddCounter] = React.useState(0);
 
 
@@ -69,7 +80,7 @@ const EditBuilding = (props) => {
   const fgRef = useRef();
   const refno = window.location.pathname.replace('/ViewBuilding/', '');
   const leaflet = useLeaflet();
-
+  const [blockName, setBlockName] = useState('')
 
 
 
@@ -83,7 +94,27 @@ const EditBuilding = (props) => {
   ]
   const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
 
+  function Boundary() {
+    const detailLcl = details;
+    if (details !== null && details !== undefined && details !== "") {
+      if (details.boundaries !== null && details.boundaries !== undefined
+        && details.boundaries !== "") {
+        if (details.boundaries.length > 0) {
+            return(<Polygon positions={details.boundaries}></Polygon>);
+        } else {
+          return (<div></div>)
+        }
+      } else {
+        return (<div></div>)
+      }
 
+    } else {
+      return (<div></div>)
+    }
+
+
+
+  }
   function EditableLayer(props) {
     const leaflet = useLeaflet();
     const editLayerRef = React.useRef();
@@ -144,18 +175,38 @@ const EditBuilding = (props) => {
       });
 
     }
+
+  
+  
+    
+   
+    
+    
+
+  
     function onPolygonCreated(e) {
+      
+      
+      debugger;
 
       addFloorCounter++;
+     
       if (addFloorCounter === activeFloor.blocks.length) {
         let latlngs = e.layer.getLatLngs();
         latlngs = latlngs.length > 0 ? latlngs[0] : latlngs;
+       // toggleBlockDescription()
 
         crupdateLayer2ActiveFloor(latlngs, null, null)
 
         addFloorCounter = 0;
-      }
+        
+        //toggleBlockDescription()
+        updateBuildingFromActiveFloor()
 
+        debugger;
+      }
+     
+  
 
 
 
@@ -165,6 +216,7 @@ const EditBuilding = (props) => {
     function onDeleted() {
 
     }
+    
 
 
     return (
@@ -212,6 +264,7 @@ const EditBuilding = (props) => {
 
     return (
       <div>
+<div>
 
         {layers.map((layer, i) => {
           return (
@@ -222,7 +275,16 @@ const EditBuilding = (props) => {
               onLayerClicked={handleLayerClick}
             />
           );
+          
+
         })}
+        
+      </div>
+
+      <div>
+
+
+      </div>
       </div>
     );
   }
@@ -400,9 +462,14 @@ const EditBuilding = (props) => {
     }
     let activeFloor4crup = activeFloor;
     if (polygonId === null) {
-      //ask description
+      debugger;
+      
 
-      activeFloor4crup.blocks.push({ blockId: new Date().getTime().toString(), text: "", bounds: coordinates });
+      toggleBlockDescription()
+      //ask description
+      const blName = blockName;
+
+      activeFloor4crup.blocks.push({ blockId: new Date().getTime().toString(), text: blName, bounds: coordinates });
 
     } else {
       for (let flindex = 0; flindex < activeFloor4crup.blocks.length; flindex++) {
@@ -410,6 +477,7 @@ const EditBuilding = (props) => {
         if (block.blockId === polygonId) {
 
           activeFloor4crup.blocks[flindex].bounds = coordinates
+          toggleBlockDescription()
         }
 
       }
@@ -495,6 +563,14 @@ const EditBuilding = (props) => {
 
 
   }
+  function toggleBlockDescription () {
+    setBlockDescription(!blockDescription)
+  }
+  const onChangeName = e => {
+    e.preventDefault();
+    setBlockName(e.target.value);
+    
+  };
 
   function onFloorSelect(e, data) {
     const index = e.target.value;
@@ -586,6 +662,7 @@ const EditBuilding = (props) => {
   function toggle() {
     setAddFloor(!addFloor);
   }
+  
 
   const moveActiveFloor = () => {
     const markersLcl = markers;
@@ -649,7 +726,7 @@ const EditBuilding = (props) => {
   };
 
   const deleteActiveFloor = () => {
-
+    debugger;
     const activeFloorLocal = activeFloor;
     const markersL = markers;
     const markersAfterDeletion = [];
@@ -660,11 +737,13 @@ const EditBuilding = (props) => {
       }
 
     }
+
     setMarkers(markersAfterDeletion);
     // setActiveFloorPolygons(markersAfterDeletion[0].blocks);
     // setActiveFloorBoundary(markersAfterDeletion[0].boundaries);
     // setActiveFloor(markersAfterDeletion[0]);
-    if (markersAfterDeletion[0].floors.length > 0) {
+
+    if (markersAfterDeletion.length > 0) {
       setActiveFloor(markersAfterDeletion[0].floors[0]);
     } else {
       setActiveFloor(
@@ -686,7 +765,7 @@ const EditBuilding = (props) => {
       "floorno": markers.length + 1,
       "description": newDesc,
       "color": "#f18d00",
-      "blocks": [],
+      "blocks": [[0,0],[0,0],[0,0]],
       "boundaries": []
     }
     setActiveFloor(newFloor);
@@ -724,7 +803,11 @@ const EditBuilding = (props) => {
 
       </div>
 
+      <Card className="iq-card">
+          <CardBody className="iq-card-body">
+
       <div>
+        
 
 
 
@@ -790,7 +873,7 @@ const EditBuilding = (props) => {
               <h1 className="display-4">{activeFloor.description}</h1>
 
               <div id="home-chart-02">
-                <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
+                <Map center={[60.21846434365596, 24.811831922452843]} zoom={19} ref={mapRef} >
                   <Control position="topright">
                     {/* <button class="primary" onClick={handleDrawPolygonClick} value="BO"
                     style={{ "font-size": "1.5rem", "margin-left": ".05rem" ,"margin-right": ".05rem" }}>
@@ -873,6 +956,48 @@ const EditBuilding = (props) => {
 
                   </EditableGroup>
 
+                  <div>
+                  <Modal isOpen={blockDescription} toggle={() => toggleBlockDescription("blockDescription")} className="modal-sm" style={modalStyles}>
+                  
+                  <ModalHeader className="btn btn-primary" toggle={() => toggleBlockDescription("blockDescription")}>Enter the block details</ModalHeader>
+                  <ModalBody>
+                  <Card className="iq-card">
+              <CardBody className="iq-card-body">
+              <form>
+             
+                    Name: <input
+            onChange={onChangeName}
+            value={blockName}
+            type="text"
+          
+          /><br/>
+                    {/* Description: <input
+            onChange={onChangeDesc}
+            value={blockDesc}
+            type="text"
+          
+          /><br/>
+                    icon: <input
+            onChange={onChangeIcon}
+            value={icon}
+            type="url"
+          
+          /><br/> */}
+                    </form>
+                   
+                    </CardBody>
+                    </Card>
+  
+                  </ModalBody>
+                  <ModalFooter>
+                 {/* <Button color="primary" >submit</Button>  */}
+                  <Button color="secondary" onClick={() => toggleBlockDescription("blockDescription")}>Ok</Button>
+                  </ModalFooter>
+                  
+                  
+                  </Modal>
+                  </div>
+
 
                   {/* <FeatureGroup>
                   
@@ -914,7 +1039,24 @@ const EditBuilding = (props) => {
 
 
                   {/* </FeatureGroup>  */}
+                  {/* import React from "react";
 
+import "semantic-ui-css/semantic.min.css";
+
+import { Button, Popup } from "semantic-ui-react";
+
+export default function App() {
+  return (
+    <div className="App">
+      <Popup
+        trigger={<Button>Register</Button>}
+        position="top center"
+      >
+        Tooltip for the register button
+      </Popup>
+    </div>
+  );
+} */}
 
 
                   <Control position="topright" >
@@ -924,11 +1066,21 @@ const EditBuilding = (props) => {
 
 
 
-                          <div key={mLr.id}>
+                          <div>
+                            <Tooltip
+                            style={{fontSize:"20px"}}
+                         title=   {<h3 style={{ color: "lightblue" }}>{mLr.description}</h3>}
+       
+        placement="left"
+      >
 
-                            <button class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
+                            <button variant="contained" class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
                               {mLr.floorno}
                             </button>
+                            </Tooltip>
+                            {/* <ReactTooltip id="registerTip" place="top" effect="solid">
+        {mLr.description}
+      </ReactTooltip> */}
 
 
                           </div>
@@ -938,23 +1090,29 @@ const EditBuilding = (props) => {
 
                     </div>
                   </Control>
-                  {if(details!==undefined&&details.boundaries.length>0)
+                  {/* {if(details!==undefined&&details.boundaries.length>0)
                     <Polygon positions={details.boundaries} ></Polygon>
-                  }
+                  } */}
 
-
+                  <Boundary></Boundary>
 
 
                 </Map>
               </div>
             </div>
           </div>
+          
         </div>
+        
 
 
 
 
       </div>
+      
+      </CardBody>
+      </Card>
+      
     </div>
   )
 }

@@ -119,7 +119,7 @@ const Map1 = (props) => {
     const { layerType, layer } = e;
     let markersLcl = markers;
 
-    if (bId === "") {
+    if (bId === "" && layerType === "polygon") {
       editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable();
       debugger;
       editRef.current.leafletElement._toolbars.edit.options.featureGroup.removeLayer(layer);
@@ -143,6 +143,8 @@ const Map1 = (props) => {
         }
         debugger;
       } else if (layerType === "marker") {
+        setNewLat(layer.getLatLng().lat);
+        setNewLng(layer.getLatLng().lng);
         toggleModal();
       }
     }
@@ -412,19 +414,17 @@ const Map1 = (props) => {
 
   }
 
-  function renderPopup(item) {
-
+  function renderPopup (item){
+  
     return (
-
-      <Popup
-
-      >
-
-        <Link to={item.link} >
-          {item.description
-          }</Link>
+      
+      <Popup >
+        {item.description}
+     
+         
+        {/* <Link  to={"/ViewBuilding/" + item.id} >{item.description}</Link> */}
       </Popup>
-
+      
     );
   }
 
@@ -483,6 +483,7 @@ const Map1 = (props) => {
       );
     });
   };
+  
 
   const onChangeSearch = (e) => {
 
@@ -542,7 +543,7 @@ const Map1 = (props) => {
                     >
                       {/* <renderPopup item={item}></renderPopup> */}
 
-
+                      {renderPopup(item) }
 
                     </Marker>
                   ))

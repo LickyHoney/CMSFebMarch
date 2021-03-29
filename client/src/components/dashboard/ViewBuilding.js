@@ -16,6 +16,8 @@ import { CardBody, Card,Breadcrumb, BreadcrumbItem, ButtonGroup, ButtonToolbar, 
 // Material components
 import { makeStyles, Button } from "@material-ui/core";
 import { set } from "mongoose";
+import Tooltip from "@material-ui/core/Tooltip";
+import ReactTooltip from "react-tooltip";
 
 
 
@@ -483,6 +485,27 @@ const ViewBuilding = (props) => {
     }
   };
 
+  function Boundary() {
+    const detailLcl = details;
+    if (details !== null && details !== undefined && details !== "") {
+      if (details.boundaries !== null && details.boundaries !== undefined
+        && details.boundaries !== "") {
+        if (details.boundaries.length > 0) {
+            return(<Polygon positions={details.boundaries}></Polygon>);
+        } else {
+          return (<div></div>)
+        }
+      } else {
+        return (<div></div>)
+      }
+
+    } else {
+      return (<div></div>)
+    }
+
+
+
+  }
 
   const _onEdited = (e) => {
     debugger;
@@ -576,6 +599,7 @@ const ViewBuilding = (props) => {
   return (
 
     <div>
+      
      
         <div class="row">
           <Breadcrumb class="mb-4">
@@ -587,9 +611,24 @@ const ViewBuilding = (props) => {
         </div>
 
         <div></div>
-        <div className="row" style={{ margin: ".6%" }}>
+        <Card className="iq-card">
+          <CardBody className="iq-card-body">
+         <div className="row" style={{ margin: ".6%" }}>
+         <div className="col-lg-4">
+          <div className="iq-card iq-card-block iq-card-stretch iq-card-height bg-transparent">
+            <div className="iq-card-body rounded p-0" style={addressCardStyle} >
+              <div className="iq-caption">
+                <h1>{details.name}</h1>
+                <h3>{details.description}</h3>
+                <h3>{details.Apartment} {markers.street}</h3>
+                <h3>{details.region} {markers.pincode}</h3>
+                <h3>{details.country}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <div className="col-lg-4">
+          {/*<div className="col-lg-4">
             <div className="iq-card iq-card-block iq-card-stretch iq-card-height bg-transparent">
 
               <FormGroup className="form-group">
@@ -637,13 +676,13 @@ const ViewBuilding = (props) => {
 
               </FormGroup>
 
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
 
 
           <div className="col-lg-8">
-            <div className="iq-card overflow-hidden">
-              <h1 className="display-4">{activeFloor.description}</h1>
+            <div className="iq-card overflow-hidden" >
+              <h6 className="display-4" >{activeFloor.description}</h6>
 
               <div id="home-chart-02">
                 <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
@@ -770,7 +809,15 @@ const ViewBuilding = (props) => {
 
                 </FeatureGroup> */}
 
+{/* <div className="App">
+      <button data-tip data-for="registerTip">
+        Register
+      </button>
 
+      <ReactTooltip id="registerTip" place="top" effect="solid">
+        Tooltip for the register button
+      </ReactTooltip>
+    </div> */}
 
                   <Control position="topright" >
                     <div>
@@ -780,10 +827,20 @@ const ViewBuilding = (props) => {
 
 
                           <div>
+                            <Tooltip
+                            style={{fontSize:"20px"}}
+                         title=   {<h3 style={{ color: "lightblue" }}>{mLr.description}</h3>}
+       
+        placement="left"
+      >
 
-                            <button class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
+                            <button variant="contained" class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
                               {mLr.floorno}
                             </button>
+                            </Tooltip>
+                            {/* <ReactTooltip id="registerTip" place="top" effect="solid">
+        {mLr.description}
+      </ReactTooltip> */}
 
 
                           </div>
@@ -795,6 +852,7 @@ const ViewBuilding = (props) => {
                   </Control>
 
 
+                  <Boundary></Boundary>
 
 
 
@@ -803,6 +861,8 @@ const ViewBuilding = (props) => {
             </div>
           </div>
         </div>
+        </CardBody>
+        </Card>
 
 
 
