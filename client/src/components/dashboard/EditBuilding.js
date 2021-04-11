@@ -70,7 +70,7 @@ const EditBuilding = (props) => {
   const [boundaryid, setBoundaryid] = useState(0);
   const [selectedFloorGeoData, setselectedFloorGeoData] = useState('');
   const [blockDescription, setBlockDescription] = useState(false);
-
+  const [draftBlock, setDraftBlock] = useState('');
  
   // const [addCounter,setAddCounter] = React.useState(0);
 
@@ -148,6 +148,7 @@ const EditBuilding = (props) => {
       const layerObj = e.layers._layers;
 
       const layer = layerObj[Object.keys(layerObj)[0]];
+      const center = [layer._bounds.getCenter()];
       if (layer !== undefined && layer !== null) {
         const props = layer.feature.properties;
         if (props.hasOwnProperty('id') && props.hasOwnProperty('ground')) {
@@ -155,7 +156,7 @@ const EditBuilding = (props) => {
           const floorIndex = props.ground;
           let latlngs = layer.getLatLngs();
           latlngs = latlngs.length > 0 ? latlngs[0] : latlngs;
-          crupdateLayer2ActiveFloor(latlngs, polygonId, floorIndex)
+          crupdateLayer2ActiveFloor(latlngs, polygonId, floorIndex,center)
 
         }
       }
@@ -186,30 +187,19 @@ const EditBuilding = (props) => {
   
     function onPolygonCreated(e) {
       
-      
+      // toggleBlockDescription();
       debugger;
 
-      addFloorCounter++;
+      //addFloorCounter++;
      
-      if (addFloorCounter === activeFloor.blocks.length) {
-        let latlngs = e.layer.getLatLngs();
-        latlngs = latlngs.length > 0 ? latlngs[0] : latlngs;
-       // toggleBlockDescription()
+      setDraftBlock(e.layer);
+      toggleBlockDescription();
 
-        crupdateLayer2ActiveFloor(latlngs, null, null)
-
-        addFloorCounter = 0;
+      // if (addFloorCounter === activeFloor.blocks.length) {
         
-        //toggleBlockDescription()
-        updateBuildingFromActiveFloor()
-
         debugger;
-      }
+      //}
      
-  
-
-
-
 
     }
 
@@ -443,7 +433,8 @@ const EditBuilding = (props) => {
   //     
   //   editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
   // })
-  function crupdateLayer2ActiveFloor(latlngs, polygonId, floorIndex) {
+  function crupdateLayer2ActiveFloor(latlngs, polygonId, floorIndex,center) {
+  
     let coordinates = []
     for (let latlngsIdx = 0; latlngsIdx < latlngs.length; latlngsIdx++) {
 
@@ -460,16 +451,20 @@ const EditBuilding = (props) => {
 
       }
     }
+    debugger;
     let activeFloor4crup = activeFloor;
     if (polygonId === null) {
+      toggleBlockDescription();
+      //console.log(blockName);
       debugger;
       
 
-      toggleBlockDescription()
+      //  toggleBlockDescription()
       //ask description
-      const blName = blockName;
+      //const blName = blockName;
 
-      activeFloor4crup.blocks.push({ blockId: new Date().getTime().toString(), text: blName, bounds: coordinates });
+      activeFloor4crup.blocks.push({ blockId: new Date().getTime().toString(), text: blockName, bounds: coordinates,centre: center });
+      debugger;
 
     } else {
       for (let flindex = 0; flindex < activeFloor4crup.blocks.length; flindex++) {
@@ -477,7 +472,7 @@ const EditBuilding = (props) => {
         if (block.blockId === polygonId) {
 
           activeFloor4crup.blocks[flindex].bounds = coordinates
-          toggleBlockDescription()
+          // toggleBlockDescription()
         }
 
       }
@@ -533,16 +528,19 @@ const EditBuilding = (props) => {
 
 
   }
-  const handleSaveFloor = (e) => {
+  const handleSaveFloor = (e, polygonId) => {
+    debugger;
     let detailsLocal = details;
     const markersLocal = markers;
     details.floors = markersLocal
 
-
     service
       .updateBuilding(details.id, details)
+      window.location.reload();
 
   }
+  
+  
   function block2Layer(iBlock, floorIndex, floorColor) {
 
 
@@ -550,6 +548,7 @@ const EditBuilding = (props) => {
       "type": "Feature",
       "properties": {
         "id": iBlock.blockId,
+        "text": blockName,
         "ground": floorIndex,
 
       },
@@ -573,6 +572,8 @@ const EditBuilding = (props) => {
   };
 
   function onFloorSelect(e, data) {
+    debugger;
+   
     const index = e.target.value;
     let selectedFloorPolygonLayers = [];
     let activeFloorSel = markers[index];
@@ -580,10 +581,13 @@ const EditBuilding = (props) => {
 
     for (let blockIdx = 0; blockIdx < activeFloorSel.blocks.length; blockIdx++) {
       const blockPolygon = activeFloorSel.blocks[blockIdx];
+      //const center = [activeFloorSel.blocks.bounds.getCenter()];
+     
       const geoJsonObj = block2Layer(blockPolygon, index, floorColor);
 
-
+      // blockPolygon.push({centre: center});
       selectedFloorPolygonLayers.push(geoJsonObj);
+      
 
     }
 
@@ -725,6 +729,16 @@ const EditBuilding = (props) => {
     });
   };
 
+  // const deleteBuildingConfirm = (e) => {
+
+  //   debugger;
+  //   const bid = delBuildingId;
+  //   service.deletion(bid);
+  //   window.location.reload();
+
+
+  // }
+
   const deleteActiveFloor = () => {
     debugger;
     const activeFloorLocal = activeFloor;
@@ -742,9 +756,9 @@ const EditBuilding = (props) => {
     // setActiveFloorPolygons(markersAfterDeletion[0].blocks);
     // setActiveFloorBoundary(markersAfterDeletion[0].boundaries);
     // setActiveFloor(markersAfterDeletion[0]);
-
+    // for (let y = 0; y < markersAfterDeletion.length; y++) {
     if (markersAfterDeletion.length > 0) {
-      setActiveFloor(markersAfterDeletion[0].floors[0]);
+      setActiveFloor(markersAfterDeletion);
     } else {
       setActiveFloor(
         {
@@ -756,17 +770,48 @@ const EditBuilding = (props) => {
 
       );
     }
+  //}
+  }
+
+  const createBlockWithDesc = () => {
+    
+    const draftBlockLocal = draftBlock;
+    const markersL1 =markers;
+    let floorIndex = null;
+    debugger;
+    for (var x=0; x<markersL1.length; x++){
+      if (activeFloor.floorno === markersL1[x].floorno){
+        floorIndex = x;
+        break;
+      }
+    }
+    
+    let latlngs =draftBlockLocal.getLatLngs();
+    let center = [draftBlockLocal._bounds.getCenter()];
+         latlngs = latlngs.length > 0 ? latlngs[0] : latlngs;
+      
+      
+       
+       debugger;
+        crupdateLayer2ActiveFloor(latlngs, null, floorIndex,center)
+
+        
+        
+        updateBuildingFromActiveFloor()
+
+    debugger;
   }
 
 
   const handleAddFloor = () => {
+    debugger;
 
     const newFloor = {
       "floorno": markers.length + 1,
       "description": newDesc,
       "color": "#f18d00",
-      "blocks": [[0,0],[0,0],[0,0]],
-      "boundaries": []
+      "blocks": [[0,0],[0,0],[0,0]]
+     
     }
     setActiveFloor(newFloor);
     setActiveFloorBoundary(newFloor.boundaries);
@@ -776,6 +821,8 @@ const EditBuilding = (props) => {
     setMarkers(markersLocal);
 
     setNewDesc("");
+    handleSaveFloor();
+    window.location.reload();
   }
 
 
@@ -890,7 +937,7 @@ const EditBuilding = (props) => {
                       <ModalBody>
 
 
-                        <p>Floor: {markers.length + 1}</p>
+                        {/* <p>Floor: {markers.length + 1}</p> */}
 
                         <p>Enter Floor Description</p>
                         <input type="text" onChange={changeHandlerDesc} value={newDesc}
@@ -953,6 +1000,25 @@ const EditBuilding = (props) => {
                   </LayersControl>
 
                   <EditableGroup data={selectedFloorGeoData} >
+                    {/* {
+                      markers.map((marker, ind) => (
+                        marker.blocks.map((block, ind) => (
+
+                        
+
+                        <label position={block.center}>
+           <Tooltip permanent direction="center" class="labelText"> {block.text}</Tooltip> </label>
+
+)) ))
+                    } */}
+                  
+                  {/* <Tooltip
+                            style={{fontSize:"20px"}}
+                         title=   {<h3 style={{ color: "lightblue" }}>{mLr.description}</h3>}
+       
+        placement="left"
+      >
+      </Tooltip> */}
 
                   </EditableGroup>
 
@@ -991,7 +1057,7 @@ const EditBuilding = (props) => {
                   </ModalBody>
                   <ModalFooter>
                  {/* <Button color="primary" >submit</Button>  */}
-                  <Button color="secondary" onClick={() => toggleBlockDescription("blockDescription")}>Ok</Button>
+                  <Button color="secondary" onClick={createBlockWithDesc}>Ok</Button>
                   </ModalFooter>
                   
                   

@@ -304,6 +304,7 @@ const Map1 = (props) => {
 
   const deleteBuildingConfirm = (e) => {
 
+    debugger;
     const bid = delBuildingId;
     service.deletion(bid);
     window.location.reload();
