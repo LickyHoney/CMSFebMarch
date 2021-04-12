@@ -97,8 +97,8 @@
       ],
       "floors": [
         {
-          "floorno": 1,
-          "description": "Floor1",
+          "id": 0,
+          "description": "Floor 1",
           "color": "#f18d00",
           "blocks": [
             [
@@ -232,8 +232,8 @@
           ]
         },
         {
-          "floorno": 2,
-          "description": "Floor2",
+          "id": "1",
+          "description": "Floor 2",
           "color": "#f18d00",
           "blocks": [
             [
@@ -363,8 +363,8 @@
           ]
         },
         {
-          "floorno": 3,
-          "description": "Floor3",
+          "id": "2",
+          "description": "Floor 3",
           "color": "#f18d00",
           "blocks": [
             [
@@ -382,8 +382,27 @@
           ]
         },
         {
-          "floorno": 4,
+          "id": "3",
           "description": "Floor 4",
+          "color": "#f18d00",
+          "blocks": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "id": "5",
+          "description": "Floor 6",
           "color": "#f18d00",
           "blocks": [
             [

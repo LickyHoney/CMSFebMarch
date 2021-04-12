@@ -81,6 +81,7 @@ const EditBuilding = (props) => {
   const refno = window.location.pathname.replace('/ViewBuilding/', '');
   const leaflet = useLeaflet();
   const [blockName, setBlockName] = useState('')
+  const [FloorIdx, setFloorIdx] = useState(0)
 
 
 
@@ -282,8 +283,9 @@ const EditBuilding = (props) => {
 
 
   const updateFloor = {
+    id:FloorIdx,
 
-    floorno: markers.length + 1,
+    // floorno: markers.length + 1,
     description: "newDesc",
     color: '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6),
     blocks: [],
@@ -463,7 +465,7 @@ const EditBuilding = (props) => {
       //ask description
       //const blName = blockName;
 
-      activeFloor4crup.blocks.push({ blockId: new Date().getTime().toString(), text: blockName, bounds: coordinates,centre: center });
+      activeFloor4crup.blocks.push({  blockId: new Date().getTime().toString(), text: blockName, bounds: coordinates,centre: center });
       debugger;
 
     } else {
@@ -565,6 +567,11 @@ const EditBuilding = (props) => {
   function toggleBlockDescription () {
     setBlockDescription(!blockDescription)
   }
+  const onChangeIndex = e => {
+    e.preventDefault();
+    setFloorIdx(e.target.value);
+    
+  };
   const onChangeName = e => {
     e.preventDefault();
     setBlockName(e.target.value);
@@ -637,7 +644,8 @@ const EditBuilding = (props) => {
         } else {
           setActiveFloor(
             {
-              "floorno": "1",
+              "id":FloorIdx,
+              // "floorno": "1",
               "description": "",
               "color": "#f18d00",
               "blocks": []
@@ -674,7 +682,7 @@ const EditBuilding = (props) => {
     if (activeFloor !== undefined && activeFloor !== null) {
       for (let i = 0; i < markersLcl.length; i++) {
 
-        if (activeFloor.floorno === markersLcl[i].floorno) {
+        if (activeFloor.id === markersLcl[i].id) {
           markersLcl[i].description = activeFloor.description;
           markersLcl[i].blocks = activeFloor.blocks;
           markersLcl[i].boundaries = activeFloor.boundaries;
@@ -746,7 +754,7 @@ const EditBuilding = (props) => {
     const markersAfterDeletion = [];
     for (let j = 0; j < markersL.length; j++) {
       const marker = markersL[j];
-      if (marker.floorno !== activeFloorLocal.floorno) {
+      if (marker.id !== activeFloorLocal.id) {
         markersAfterDeletion.push(marker);
       }
 
@@ -762,7 +770,8 @@ const EditBuilding = (props) => {
     } else {
       setActiveFloor(
         {
-          "floorno": "1",
+          "id": FloorIdx,
+          // "floorno": "1",
           "description": "",
           "color": "#f18d00",
           "blocks": []
@@ -780,7 +789,7 @@ const EditBuilding = (props) => {
     let floorIndex = null;
     debugger;
     for (var x=0; x<markersL1.length; x++){
-      if (activeFloor.floorno === markersL1[x].floorno){
+      if (activeFloor.id === markersL1[x].id){
         floorIndex = x;
         break;
       }
@@ -807,7 +816,8 @@ const EditBuilding = (props) => {
     debugger;
 
     const newFloor = {
-      "floorno": markers.length + 1,
+"id":FloorIdx,
+      // "floorno": markers.length + 1,
       "description": newDesc,
       "color": "#f18d00",
       "blocks": [[0,0],[0,0],[0,0]]
@@ -817,12 +827,13 @@ const EditBuilding = (props) => {
     setActiveFloorBoundary(newFloor.boundaries);
     setActiveFloorPolygons(newFloor.blocks);
     const markersLocal = markers;
-    markersLocal.push(newFloor);
+    markersLocal.splice(FloorIdx, 0, newFloor )
+  //  markersLocal.push(newFloor);
     setMarkers(markersLocal);
 
     setNewDesc("");
     handleSaveFloor();
-    window.location.reload();
+    //window.location.reload();
   }
 
 
@@ -938,6 +949,12 @@ const EditBuilding = (props) => {
 
 
                         {/* <p>Floor: {markers.length + 1}</p> */}
+                        <p>Index:</p> <input
+            onChange={onChangeIndex}
+            value={FloorIdx}
+            type="number"
+          
+          />
 
                         <p>Enter Floor Description</p>
                         <input type="text" onChange={changeHandlerDesc} value={newDesc}
@@ -1030,6 +1047,7 @@ const EditBuilding = (props) => {
                   <Card className="iq-card">
               <CardBody className="iq-card-body">
               <form>
+             
              
                     Name: <input
             onChange={onChangeName}
@@ -1133,17 +1151,17 @@ export default function App() {
 
 
                           <div>
-                            <Tooltip
+                            {/* <Tooltip
                             style={{fontSize:"20px"}}
                          title=   {<h3 style={{ color: "lightblue" }}>{mLr.description}</h3>}
        
         placement="left"
-      >
+      > */}
 
                             <button variant="contained" class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
-                              {mLr.floorno}
+                              {mLr.description}
                             </button>
-                            </Tooltip>
+                            {/* </Tooltip> */}
                             {/* <ReactTooltip id="registerTip" place="top" effect="solid">
         {mLr.description}
       </ReactTooltip> */}
