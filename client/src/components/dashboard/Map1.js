@@ -350,12 +350,19 @@ const Map1 = (props) => {
   };
 
   useEffect(() => {
+    // const results = markers.filter(marker =>
+    // (marker.name.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+
+
+    // )
+    // );
+
     const results = markers.filter(marker =>
-    (marker.name.toLowerCase().includes(searchTerm.toLocaleLowerCase())
-
-
-    )
-    );
+      (JSON.stringify(marker).toLowerCase().includes(searchTerm.toLocaleLowerCase())
+  
+  
+      )
+      );
     setMarkers(results);
     if (searchTerm === "") {
       service

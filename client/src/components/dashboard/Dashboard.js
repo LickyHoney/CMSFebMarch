@@ -7,13 +7,21 @@ import Map1 from "./Map1.js";
 import { Link } from 'react-router-dom';
 //import {MapContainer,  Marker, Popup,  TileLayer } from "react-leaflet";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Path } from "leaflet";
+
 
 //import { useHistory } from 'react-router-dom';
 
 class Dashboard extends Component {
+  
+  state = {
+    isButtonDisabled: false
+  }
+  
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
+    
   };
   
   
@@ -21,15 +29,18 @@ class Dashboard extends Component {
     const { user } = this.props.auth;
 
     return (
+      
       <div >
         {/* <span className="myClass" style={{float : 'left', paddingRight : '5px'}} > </span> */}
         {/* style="font-size: 20px; color:#4a54f1; text-align:center; padding-top:100px;" */}
         <p style={{fontSize: '20px', color: 'white'}}> Hi <i><b>{user.name}</b></i></p>
                
                 {/* <MapView /> */}
+                
             <div>
-            
+           { user.name !== null && user.name !== undefined ?
             <button
+            
               style={{
                 width: "150px",
                 borderRadius: "3px",
@@ -38,10 +49,16 @@ class Dashboard extends Component {
                 
               }}
               onClick={this.onLogoutClick}
+              
               className="btn btn-primary float-left"
             >
               Logout
             </button>
+            :
+            null
+  }
+  
+           
             </div>
           </div>
         

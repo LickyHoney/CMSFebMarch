@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import setAuthToken from "./utils/setAuthToken";
 
@@ -49,13 +50,19 @@ if (localStorage.jwtToken) {
   }
 }
 class App extends Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
     return (
       <Provider store={store}>
         <Router>
           <div className="App">
-            <Navbar />
+          
+
+           <Navbar /> 
             <Route exact path="/" component={Login} />
+           
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
 

@@ -66,19 +66,24 @@ class Login extends Component {
     return (
       <div className="container">
         
-        <div style={{ marginTop: "4rem" }} className="row">
+        
+        <div style={{ marginTop: "20rem" }} className="row">
           <div className="col s8 offset-s2">
             {/* <Link to="/" className="btn-flat waves-effect">
               <i className="material-icons left">keyboard_backspace</i> Back to
               home
             </Link> */}
+            
             <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-              <h3>
-                <b>Login</b> 
-              </h3>
+              <h1>
+                <b>LogIn</b> 
+              </h1>
               
             </div>
-            <form noValidate onSubmit={this.onSubmit}>
+         
+            
+            <form noValidate onSubmit={this.onSubmit} >
+            
               
             <Card className="iq-card">
                     <CardBody className="iq-card-body">
@@ -88,7 +93,8 @@ class Login extends Component {
               <label htmlFor="email">Email</label>
               </Col>
               <Col>
-                <input
+              
+                <input 
                   onChange={this.onChange}
                   value={this.state.email}
                   error={errors.email}
@@ -115,7 +121,7 @@ class Login extends Component {
               <label htmlFor="password">Password</label>
               </Col>
               <Col>
-                <input
+                <input 
                   onChange={this.onChange}
                   value={this.state.password}
                   error={errors.password}
@@ -154,12 +160,13 @@ class Login extends Component {
               </div>
               </CardBody>
                 </Card>
-                <p className="grey-text text-darken-1">
+                <p className="grey-text text-darken-1" style={{fontSize: '20px'}}>
                 Don't have an account? <Link to="/register">Register</Link>
               </p>
             </form>
           </div>
         </div>
+        
       </div>
     );
   }

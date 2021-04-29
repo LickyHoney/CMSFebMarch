@@ -6,11 +6,11 @@ import LayersControl2, { ControlledLayerItem } from "./LayerControl2";
 // import "./assets/leaflet.draw.css"
 import {
   Map, TileLayer, FeatureGroup, useLeaflet, LayersControl, Marker, Polygon,
-  Popup, LayerGroup, Circle, GeoJSON
+  Popup, LayerGroup, Circle, GeoJSON,CircleMarker
 } from "react-leaflet";
 import Control from 'react-leaflet-control';
 
-import L, { circleMarker } from "leaflet";
+import L, { circleMarker, tooltip } from "leaflet";
 
 import { CardBody, Card, Breadcrumb, BreadcrumbItem, ButtonGroup, ButtonToolbar, Form, FormGroup, Label, Input, ModalHeader, Modal, ModalBody, ModalFooter } from 'reactstrap';
 // Material components
@@ -232,6 +232,15 @@ const EditBuilding = (props) => {
             {...props}
           />
           {/* <Polygon positions={activeFloorBoundary} onClick={handleLayerClick}> </Polygon> */}
+          <Marker 
+                      position={[60.21846434365596, 24.811831922452843]}
+                      
+                    >
+                      {/* <renderPopup item={item}></renderPopup> */}
+
+                     
+
+                    </Marker>
         </FeatureGroup>
       </div>
     );
@@ -243,13 +252,18 @@ const EditBuilding = (props) => {
     function handleLayerClick(e, drawControl) {
       setSelectedLayerIndex(e.target.feature.properties.editLayerId);
     }
-
+    debugger;
     let dataLayer = new L.GeoJSON(props.data);
     let layers = [];
     let i = 0;
     dataLayer.eachLayer((layer) => {
       layer.feature.properties.editLayerId = i;
+     
+      if(layer.feature.properties.name!==undefined){
+      layer.bindTooltip(layer.feature.properties.name, {permanent: true, opacity: 0.7, direction:"center"}).openTooltip();
+    }
       layers.push(layer);
+      
       i++;
     });
 
@@ -264,7 +278,10 @@ const EditBuilding = (props) => {
               layer={layer}
               showDrawControl={i === selectedLayerIndex}
               onLayerClicked={handleLayerClick}
-            />
+            >
+                  
+
+            </EditableLayer>
           );
           
 
@@ -564,6 +581,9 @@ const EditBuilding = (props) => {
 
 
   }
+
+  
+
   function toggleBlockDescription () {
     setBlockDescription(!blockDescription)
   }
@@ -591,13 +611,48 @@ const EditBuilding = (props) => {
       //const center = [activeFloorSel.blocks.bounds.getCenter()];
      
       const geoJsonObj = block2Layer(blockPolygon, index, floorColor);
-
+     
+  
       // blockPolygon.push({centre: center});
       selectedFloorPolygonLayers.push(geoJsonObj);
+      if(blockPolygon.centre!==undefined){
+        
+        // label = String(feature.properties.name) 
+        let pointLayer = { "type": "Feature", "properties": { "name": blockPolygon.text  }, 
+        "geometry": { "type": "Point", 
+        "coordinates": [blockPolygon.centre[0].lng ,blockPolygon.centre[0].lat  ] } ,
+        
+        
+      };
+     
+        selectedFloorPolygonLayers.push(pointLayer)
+        
+        
+      }
       
+      // create layer for marker 
 
     }
+    // var data_points = {
+    //   "type": "FeatureCollection",
+    //   "name": "test-points-short-named",
+    //   "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+    //   "features": [
+    //   { "type": "Feature", "properties": { "name": "1" }, "geometry": { "type": "Point", "coordinates": [ -135.02507178240552, 60.672508785052223 ] } },
+    //   { "type": "Feature", "properties": { "name": "6"}, "geometry": { "type": "Point", "coordinates": [ -135.02480935075292, 60.672888247036376 ] } },
+    //   { "type": "Feature", "properties": { "name": "12"}, "geometry": { "type": "Point", "coordinates": [ -135.02449372349508, 60.672615176262731 ] } },
+    //   { "type": "Feature", "properties": { "name": "25"}, "geometry": { "type": "Point", "coordinates": [ -135.0240752514004, 60.673313811878423 ] } }
+    //   ]};
+    // var pointLayer = L.geoJSON(null, {
+    //   pointToLayer: function(feature,latlng){
+    //     label = String(feature.properties.name) // Must convert to string, .bindTooltip can't use straight 'feature.properties.attribute'
+    //     return new L.CircleMarker(latlng, {
+    //       radius: 1,
+    //     }).bindTooltip(label, {permanent: true, opacity: 0.7}).openTooltip();
+    //     }
+    //   });
 
+    // pointLayer.addData(data_points);
     const featureCollection = {
       "type": "FeatureCollection",
       "name": "",
@@ -611,10 +666,12 @@ const EditBuilding = (props) => {
     };
     // const floorLayers = new L.GeoJSON(featureCollection);
 
+
     // setActiveFloorPolygons(floorLayers.getLayers());
     setselectedFloorGeoData(featureCollection);
     setActiveFloorBoundary(activeFloorSel.boundaries);
     setActiveFloor(activeFloorSel);
+    
 
   }
 
@@ -1021,10 +1078,10 @@ const EditBuilding = (props) => {
                       markers.map((marker, ind) => (
                         marker.blocks.map((block, ind) => (
 
-                        
+                        <Marker position={block.centre}>
 
-                        <label position={block.center}>
-           <Tooltip permanent direction="center" class="labelText"> {block.text}</Tooltip> </label>
+                       
+           <Tooltip permanent direction="center"> {block.text}</Tooltip> </Marker>
 
 )) ))
                     } */}

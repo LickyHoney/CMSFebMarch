@@ -94,6 +94,9 @@ function EditableGroup(props) {
   let i = 0;
   dataLayer.eachLayer((layer) => {
     layer.feature.properties.editLayerId = i;
+    if(layer.feature.properties.name!==undefined){
+      layer.bindTooltip(layer.feature.properties.name, {permanent: true, opacity: 0.7, direction:"center"}).openTooltip();
+    }
     layers.push(layer);
     i++;
   });
@@ -371,6 +374,21 @@ const ViewBuilding = (props) => {
 
 
       selectedFloorPolygonLayers.push(geoJsonObj);
+      if(blockPolygon.centre!==undefined){
+        
+        // label = String(feature.properties.name) 
+        let pointLayer = { "type": "Feature", "properties": { "name": blockPolygon.text  }, 
+        "geometry": { "type": "Point", 
+        "coordinates": [blockPolygon.centre[0].lng ,blockPolygon.centre[0].lat  ] } ,
+        
+        
+      };
+     
+        selectedFloorPolygonLayers.push(pointLayer)
+        
+        
+      }
+      
 
     }
     debugger;
@@ -827,17 +845,17 @@ const ViewBuilding = (props) => {
 
 
                           <div>
-                            <Tooltip
+                            {/* <Tooltip
                             style={{fontSize:"20px"}}
                          title=   {<h3 style={{ color: "lightblue" }}>{mLr.description}</h3>}
        
         placement="left"
-      >
+      > */}
 
                             <button variant="contained" class="primary" value={didx} onClick={onFloorSelect} style={{ "font-size": "1.5rem", "margin-left": ".05rem" }}>
-                              {mLr.floorno}
+                              {mLr.description}
                             </button>
-                            </Tooltip>
+                            {/* </Tooltip> */}
                             {/* <ReactTooltip id="registerTip" place="top" effect="solid">
         {mLr.description}
       </ReactTooltip> */}

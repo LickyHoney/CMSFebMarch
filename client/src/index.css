@@ -6,6 +6,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
 }
 
 
@@ -164,11 +165,16 @@ td, th {
 p {
   font-size: 0.875em;
 }
-
+.center {
+  
+  text-align: center;
+  }
+  
 
 .sr-only {
   display: none;
 }
+
 
 /* .h2 {
   font-size: 0.5em;
