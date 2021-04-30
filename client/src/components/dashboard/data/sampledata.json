@@ -429,8 +429,27 @@
           ]
         },
         {
-          "id": "5",
+          "id": "880bc3dc-ae51-431d-8ca3-1cad8e756056",
           "description": "Floor 5",
+          "color": "#f18d00",
+          "blocks": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "id": "8242ce87-41ce-4783-8603-770bcd40d907",
+          "description": "Floor 6",
           "color": "#f18d00",
           "blocks": [
             [

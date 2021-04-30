@@ -18,6 +18,7 @@ import { makeStyles, Button } from "@material-ui/core";
 import { set } from "mongoose";
 import "semantic-ui-css/semantic.min.css";
 import Tooltip from "@material-ui/core/Tooltip";
+import {v4 as uuidv4} from 'uuid';
 
 let addFloorCounter = 0;
 
@@ -84,7 +85,7 @@ const EditBuilding = (props) => {
   const [FloorIdx, setFloorIdx] = useState(0)
   const [buildingCenter, setBuildingCenter] = useState({lat:null,lng:null})
 
-
+  let FloorId = uuidv4();
 
   const polygon = [
 
@@ -703,7 +704,7 @@ const EditBuilding = (props) => {
         } else {
           setActiveFloor(
             {
-              "id":FloorIdx,
+              "id":FloorId,
               // "floorno": "1",
               "description": "",
               "color": "#f18d00",
@@ -838,7 +839,7 @@ const EditBuilding = (props) => {
     } else {
       setActiveFloor(
         {
-          "id": FloorIdx,
+          "id": FloorId,
           // "floorno": "1",
           "description": "",
           "color": "#f18d00",
@@ -884,7 +885,7 @@ const EditBuilding = (props) => {
     debugger;
 
     const newFloor = {
-"id":FloorIdx,
+"id":FloorId,
       // "floorno": markers.length + 1,
       "description": newDesc,
       "color": "#f18d00",
