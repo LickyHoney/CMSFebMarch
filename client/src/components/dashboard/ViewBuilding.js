@@ -142,6 +142,7 @@ const ViewBuilding = (props) => {
   const fgRef = useRef();
   const refno = window.location.pathname.replace('/ViewBuilding/', '');
   const leaflet = useLeaflet();
+  const [buildingCenter, setBuildingCenter] = useState({lat:null,lng:null})
 
 
 
@@ -455,10 +456,14 @@ const ViewBuilding = (props) => {
 
         }
 
-        mapRef.current.leafletElement.flyTo([selBuilding[0].latitude, selBuilding[0].longitude], 16)
+        //mapRef.current.leafletElement.flyTo([selBuilding[0].latitude, selBuilding[0].longitude], 16)
         setDetails(selBuilding[0]);
         // setBoundary(selBuilding[0].boundary.geometry.coordinates[0]);
-
+        const buildingLatLng = {
+          lat: selBuilding[0].latitude,
+          lng: selBuilding[0].longitude,
+        }
+        setBuildingCenter(buildingLatLng)
         let ml = mapLayers;
 
 
@@ -703,7 +708,8 @@ const ViewBuilding = (props) => {
               <h6 className="display-4" >{activeFloor.description}</h6>
 
               <div id="home-chart-02">
-                <Map center={[60.21846434365596, 24.811831922452843]} zoom={17} ref={mapRef} >
+              {/* {details.map((building) => ( */}
+                {buildingCenter.lat && buildingCenter.lng && <Map center={buildingCenter} zoom={16} ref={mapRef} >
                   {/* <Control position="topright">
                     <button class="primary" onClick={handleDrawPolygonClick} value="BO"
                     style={{ "font-size": "1.5rem", "margin-left": ".05rem" ,"margin-right": ".05rem" }}>
@@ -875,6 +881,8 @@ const ViewBuilding = (props) => {
 
 
                 </Map>
+}
+              {/* ))} */}
               </div>
             </div>
           </div>

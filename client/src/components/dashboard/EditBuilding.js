@@ -82,6 +82,7 @@ const EditBuilding = (props) => {
   const leaflet = useLeaflet();
   const [blockName, setBlockName] = useState('')
   const [FloorIdx, setFloorIdx] = useState(0)
+  const [buildingCenter, setBuildingCenter] = useState({lat:null,lng:null})
 
 
 
@@ -300,7 +301,7 @@ const EditBuilding = (props) => {
 
 
   const updateFloor = {
-    id:FloorIdx,
+    id:FloorIdx.length+1,
 
     // floorno: markers.length + 1,
     description: "newDesc",
@@ -688,6 +689,7 @@ const EditBuilding = (props) => {
 
   let floor = {};
   useEffect(() => {
+ 
 
     var refTemp = refno.replace("/EditBuilding/", "");
     service
@@ -714,8 +716,17 @@ const EditBuilding = (props) => {
 
 
         setDetails(selBuilding[0]);
+        
+       
+        
+        const buildingLatLng = {
+          lat: selBuilding[0].latitude,
+          lng: selBuilding[0].longitude,
+        }
+        setBuildingCenter(buildingLatLng)
+      console.log(buildingCenter)
 
-        mapRef.current.leafletElement.flyTo([selBuilding[0].latitude, selBuilding[0].longitude], 16)
+        //mapRef.current.leafletElement.flyTo([selBuilding[0].latitude, selBuilding[0].longitude], 16)
 
         // setBoundary(selBuilding[0].boundary.geometry.coordinates[0]);
 
@@ -884,7 +895,7 @@ const EditBuilding = (props) => {
     setActiveFloorBoundary(newFloor.boundaries);
     setActiveFloorPolygons(newFloor.blocks);
     const markersLocal = markers;
-    markersLocal.splice(FloorIdx, 0, newFloor )
+    markersLocal.splice(FloorIdx-1, 0, newFloor )
   //  markersLocal.push(newFloor);
     setMarkers(markersLocal);
 
@@ -904,6 +915,7 @@ const EditBuilding = (props) => {
 
 
   }
+  
 
 
 
@@ -988,7 +1000,8 @@ const EditBuilding = (props) => {
               <h1 className="display-4">{activeFloor.description}</h1>
 
               <div id="home-chart-02">
-                <Map center={[60.21846434365596, 24.811831922452843]} zoom={19} ref={mapRef} >
+              {buildingCenter.lat && buildingCenter.lng && <Map center={buildingCenter} zoom={16} ref={mapRef} >
+                {/* <Map center={[details.latitude, details.longitude]} zoom={19} ref={mapRef} > */}
                   <Control position="topright">
                     {/* <button class="primary" onClick={handleDrawPolygonClick} value="BO"
                     style={{ "font-size": "1.5rem", "margin-left": ".05rem" ,"margin-right": ".05rem" }}>
@@ -1238,7 +1251,7 @@ export default function App() {
                   <Boundary></Boundary>
 
 
-                </Map>
+                </Map>}
               </div>
             </div>
           </div>

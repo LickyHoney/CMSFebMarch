@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Container, Table, Row, Col, Card, CardTitle, CardBody, Modal, ModalHeader, Button, ModalFooter, ModalBody, Label, Input, Form, FormGroup } from 'reactstrap';
 
-
+import {v4 as uuidv4} from 'uuid';
 import DisplayEntries from "./DisplayEntries"
 import service from "./services.js";
 // import { CardBody, Card } from 'reactstrap';
@@ -256,7 +256,8 @@ const Map1 = (props) => {
     if (newName === "") {
       // toggleModal();
     } else {
-      const id = "B-" + new Date().getTime().toString();
+      //const id = "B-" + new Date().getTime().toString();
+      let id = uuidv4();
       const emptyBuilding = {
         "link": "/ViewBuilding/" + id,
         "id": id,
