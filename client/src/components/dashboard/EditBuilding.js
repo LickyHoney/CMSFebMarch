@@ -825,6 +825,7 @@ const EditBuilding = (props) => {
       const marker = markersL[j];
       if (marker.id !== activeFloorLocal.id) {
         markersAfterDeletion.push(marker);
+        
       }
 
     }

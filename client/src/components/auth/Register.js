@@ -74,7 +74,7 @@ class Register extends Component {
                     <CardBody className="iq-card-body">
               <div className="form-group">
               <Row>
-              <Col sm="6">
+              <Col sm="4">
               
               <label htmlFor="name">Name</label>
               </Col>
@@ -85,7 +85,8 @@ class Register extends Component {
                   error={errors.name}
                   id="name"
                   type="text"
-                  className={classnames("", {
+                  //placeholder="enter name"
+                  className={classnames("form-control", {
                     invalid: errors.name
                   })}
                 />
@@ -97,7 +98,7 @@ class Register extends Component {
               <div className="form-group">
               <Row>
               
-              <Col sm="6">
+              <Col sm="4">
               <label htmlFor="email">Email</label>
               </Col>
               <Col>
@@ -107,7 +108,7 @@ class Register extends Component {
                   error={errors.email}
                   id="email"
                   type="email"
-                  className={classnames("", {
+                  className={classnames("form-control", {
                     invalid: errors.email
                   })}
                 />
@@ -119,7 +120,7 @@ class Register extends Component {
               <div className="form-group">
               <Row>
               
-              <Col sm="6">
+              <Col sm="4">
               <label htmlFor="password">Password</label>
               </Col>
               <Col>
@@ -129,7 +130,7 @@ class Register extends Component {
                   error={errors.password}
                   id="password"
                   type="password"
-                  className={classnames("", {
+                  className={classnames("form-control", {
                     invalid: errors.password
                   })}
                 />
@@ -140,7 +141,7 @@ class Register extends Component {
               <div className="form-group">
               <Row>
               
-              <Col sm="6">
+              <Col sm="4">
               <label htmlFor="password2">Confirm Password</label>
               </Col>
               <Col>
@@ -150,7 +151,7 @@ class Register extends Component {
                   error={errors.password2}
                   id="password2"
                   type="password"
-                  className={classnames("", {
+                  className={classnames("form-control", {
                     invalid: errors.password2
                   })}
                 />
